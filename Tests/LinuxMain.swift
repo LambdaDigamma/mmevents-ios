@@ -1,7 +1,7 @@
 import XCTest
 
-import mmevents_iosTests
+import MMEventsTests
 
 var tests = [XCTestCaseEntry]()
-tests += mmevents_iosTests.allTests()
+tests += MMEvents.allTests()
 XCTMain(tests)

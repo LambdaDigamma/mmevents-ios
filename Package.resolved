@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "MMCommon",
+        "repositoryURL": "https://github.com/lambdadigamma/mmcommon-ios",
+        "state": {
+          "branch": "master",
+          "revision": "d111ff77e0fd5c0955cbeabd51ff01bcace7bf9b",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,3 +1,3 @@
-struct mmevents_ios {
+struct MMEvents {
     var text = "Hello, World!"
 }
