@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  MMEvents
+
+  Created by Lennart Fischer on 07.01.21.
+  Copyright © 2021 Lennart Fischer. All rights reserved.
+*/
+
+/* Date+Extensions */
+"Today" = "Heute";
+"Tomorrow" = "Morgen";
+
+/* Moers Festival */
+"Free" = "kostenlos";
+"NeedsFestivalTicket" = "Eintritt mit Festival-/Tagesticket";
+"ExtraTicket" = "Festival-/Tagesticket oder Mörzz-Ticket (*)";
+"NotKnownPrompt" = "noch nicht bekannt";
+"LocationNotKnown" = "Ort bald bekannt";
+
+/* Events */
+"LiveNow" = "jetzt live";

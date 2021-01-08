@@ -6,7 +6,16 @@
         "repositoryURL": "https://github.com/lambdadigamma/mmcommon-ios",
         "state": {
           "branch": "master",
-          "revision": "d111ff77e0fd5c0955cbeabd51ff01bcace7bf9b",
+          "revision": "6e9ed875ea2d687cf217779407ef13cc9c4d58c5",
+          "version": null
+        }
+      },
+      {
+        "package": "ModernNetworking",
+        "repositoryURL": "https://github.com/lambdadigamma/modernnetworking",
+        "state": {
+          "branch": "main",
+          "revision": "a82bcbd2d384cd4d5bbbf6d3b616c184120106a7",
           "version": null
         }
       }
