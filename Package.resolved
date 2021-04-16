@@ -2,11 +2,110 @@
   "object": {
     "pins": [
       {
+        "package": "BasicNetworking",
+        "repositoryURL": "https://github.com/LambdaDigamma/BasicNetworking",
+        "state": {
+          "branch": null,
+          "revision": "f193bf4f38d3976892212a0f4f8db6626e36905f",
+          "version": "0.0.3"
+        }
+      },
+      {
+        "package": "Bond",
+        "repositoryURL": "https://github.com/DeclarativeHub/Bond.git",
+        "state": {
+          "branch": null,
+          "revision": "146943c0bc03a93c48fb6c57db4e39f4b38ba74b",
+          "version": "7.8.1"
+        }
+      },
+      {
+        "package": "Cache",
+        "repositoryURL": "https://github.com/hyperoslo/Cache",
+        "state": {
+          "branch": null,
+          "revision": "c7f4d633049c3bd649a353bad36f6c17e9df085f",
+          "version": "6.0.0"
+        }
+      },
+      {
+        "package": "Differ",
+        "repositoryURL": "https://github.com/tonyarnold/Differ.git",
+        "state": {
+          "branch": null,
+          "revision": "4c3eb4d76ad5c14075829397a5741b0badb08dce",
+          "version": "1.4.5"
+        }
+      },
+      {
+        "package": "Fuse",
+        "repositoryURL": "https://github.com/krisk/fuse-swift",
+        "state": {
+          "branch": null,
+          "revision": "26ba868691b2d8b7bf2b1322951eb591be70ccca",
+          "version": "1.4.0"
+        }
+      },
+      {
+        "package": "Gestalt",
+        "repositoryURL": "https://github.com/regexident/Gestalt",
+        "state": {
+          "branch": null,
+          "revision": "6469230fb1b81ea449312a855b410425030b287e",
+          "version": "2.1.1"
+        }
+      },
+      {
+        "package": "Haneke",
+        "repositoryURL": "https://github.com/LambdaDigamma/HanekeSwift",
+        "state": {
+          "branch": "master",
+          "revision": "6dd6a8fb7cfa9b245cd7a8cab688a8f2cecb9d15",
+          "version": null
+        }
+      },
+      {
+        "package": "Ink",
+        "repositoryURL": "https://github.com/johnsundell/ink.git",
+        "state": {
+          "branch": null,
+          "revision": "bd223a2482449507bd3286cb262c962d32d81e4b",
+          "version": "0.5.0"
+        }
+      },
+      {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher",
+        "state": {
+          "branch": null,
+          "revision": "2a10bf41da75599a9f8e872dbd44fe0155a2e00c",
+          "version": "5.15.8"
+        }
+      },
+      {
+        "package": "MMAPI",
+        "repositoryURL": "https://github.com/LambdaDigamma/mmapi-ios",
+        "state": {
+          "branch": "master",
+          "revision": "6aa4ee9a956950bd9ac57fd13085acd0ccf542c5",
+          "version": null
+        }
+      },
+      {
         "package": "MMCommon",
         "repositoryURL": "https://github.com/lambdadigamma/mmcommon-ios",
         "state": {
           "branch": "master",
-          "revision": "6e9ed875ea2d687cf217779407ef13cc9c4d58c5",
+          "revision": "2459476fcab3a2d416bd25d1d552d3d5644c7ce4",
+          "version": null
+        }
+      },
+      {
+        "package": "MMUI",
+        "repositoryURL": "https://github.com/LambdaDigamma/mmui-ios",
+        "state": {
+          "branch": "master",
+          "revision": "0efd5b74b797086480fb1800e5053bd0434ac400",
           "version": null
         }
       },
@@ -15,8 +114,44 @@
         "repositoryURL": "https://github.com/lambdadigamma/modernnetworking",
         "state": {
           "branch": "main",
-          "revision": "a82bcbd2d384cd4d5bbbf6d3b616c184120106a7",
+          "revision": "8e59ceabf2753d6d112ebe938909917daeecbd99",
           "version": null
+        }
+      },
+      {
+        "package": "Reachability",
+        "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "6c8652a8ea35a64cf36367d07b3d6e5e6a24b272",
+          "version": "4.3.1"
+        }
+      },
+      {
+        "package": "ReactiveKit",
+        "repositoryURL": "https://github.com/DeclarativeHub/ReactiveKit.git",
+        "state": {
+          "branch": null,
+          "revision": "5b167a3fa7288395cfcba23dac84489b01d3b2f0",
+          "version": "3.18.1"
+        }
+      },
+      {
+        "package": "Resolver",
+        "repositoryURL": "https://github.com/hmlongco/Resolver",
+        "state": {
+          "branch": null,
+          "revision": "e0bcbc721818328c192a1eb22c6a6ca48029e550",
+          "version": "1.4.1"
+        }
+      },
+      {
+        "package": "SwiftCSV",
+        "repositoryURL": "https://github.com/swiftcsv/SwiftCSV",
+        "state": {
+          "branch": null,
+          "revision": "ad2042d0ba2ea260246b0e1b1d5710cbc53e2836",
+          "version": "0.6.0"
         }
       }
     ]

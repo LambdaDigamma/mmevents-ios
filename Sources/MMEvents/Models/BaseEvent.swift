@@ -1,5 +1,5 @@
 //
-//  Event.swift
+//  BaseEvent.swift
 //
 //
 //  Created by Lennart Fischer on 06.01.21.
@@ -9,11 +9,11 @@ import Foundation
 import MMCommon
 import ModernNetworking
 
-public typealias EventID = Int
-
 public protocol BaseEvent: Model, Timestamps, Stubbable, Equatable {
     
-    var id: EventID { get set }
+    associatedtype ID = Identifiable
+    
+    var id: ID { get }
     var name: String { get set }
     var description: String? { get set }
     var url: String? { get set }
@@ -35,9 +35,9 @@ public protocol BaseEvent: Model, Timestamps, Stubbable, Equatable {
     
 }
 
-extension BaseEvent {
+public extension BaseEvent {
 
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id && lhs.name == rhs.name && lhs.startDate == rhs.startDate && lhs.endDate == rhs.endDate
     }
     

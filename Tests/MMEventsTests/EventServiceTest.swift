@@ -8,27 +8,42 @@
 import XCTest
 import ModernNetworking
 import Combine
+import Cache
 @testable import MMEvents
 
 
 final class EventServiceTests: XCTestCase {
     
-    var eventService: EventService<Event>! = nil
+    var eventService: EventService! = nil
+    
     var cancellables = Set<AnyCancellable>()
     
     override func setUp() {
         
-        let mockLoader = EncodingMockLoader(model: [
-            Event.stub(withID: 1).setting(\.name, to: "Event 1"),
-            Event.stub(withID: 2),
-            Event.stub(withID: 3),
-        ])
+        let t = ResourceCollection(data: [
+            Event.stub(withID: 1)
+                .setting(\.name, to: "Event 1")
+                .setting(\.startDate, to: Date().addingTimeInterval(60 * 5)),
+            Event.stub(withID: 2)
+                .setting(\.name, to: "Event 2")
+                .setting(\.startDate, to: Date().addingTimeInterval(60 * 10)),
+            Event.stub(withID: 3)
+                .setting(\.name, to: "Event 3")
+                .setting(\.startDate, to: Date().addingTimeInterval(60 * 15)),
+        ], links: ResourceLinks(), meta: ResourceMeta())
         
-        eventService = EventService<Event>(mockLoader)
+        let mockLoader = EncodingMockLoader(model: t)
+        
+        let cache = try! Storage<String, [Event]>(diskConfig: DiskConfig(name: "EventService"),
+                                 memoryConfig: MemoryConfig(),
+                                 transformer: TransformerFactory.forCodable(ofType: [Event].self))
+        
+        eventService = EventService(mockLoader, cache)
         
     }
     
     override func tearDown() {
+        eventService.invalidateCache()
         eventService = nil
     }
     
@@ -54,6 +69,38 @@ final class EventServiceTests: XCTestCase {
             .store(in: &cancellables)
         
         wait(for: [promise], timeout: 1)
+        
+    }
+    
+    func testCachedResponseAfterNetworkRequest() {
+        
+        let promise = expectation(description: #function)
+        
+        eventService.loadEventsFromNetwork()
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                    case .failure:
+                        XCTFail("Failed while loading events")
+                    default: break
+                }
+            }, receiveValue: { events in
+                
+                self.eventService?.loadEventsFromPersistence()
+                    .replaceError(with: [])
+                    .sink { (events) in
+                        XCTAssertEqual(events.count, 3)
+                        XCTAssertEqual(events[0].name, "Event 1")
+                        XCTAssertEqual(events[1].name, "Event 2")
+                        XCTAssertEqual(events[2].name, "Event 3")
+                        promise.fulfill()
+                    }
+                    .store(in: &self.cancellables)
+                
+            })
+            .store(in: &cancellables)
+        
+        wait(for: [promise], timeout: 1)
+        
         
     }
     
