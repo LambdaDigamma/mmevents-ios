@@ -10,12 +10,11 @@ import MMCommon
 
 public class EventViewModel<Event: BaseEvent> {
     
-    open private(set) var event: Event
+    open private(set) var model: Event
     private let now: Date
     
-    
     public init(event: Event, now: Date = Date()) {
-        self.event = event
+        self.model = event
         self.now = now
     }
     
@@ -23,8 +22,8 @@ public class EventViewModel<Event: BaseEvent> {
         
         if ApplicationServerConfiguration.isMoersFestivalModeEnabled {
             
-            if let start = event.startDate,
-               let end = event.endDate {
+            if let start = model.startDate,
+               let end = model.endDate {
                 
                 if now >= start && now <= end {
                     return true
@@ -34,7 +33,7 @@ public class EventViewModel<Event: BaseEvent> {
                 
             }
             
-            if let startDate = event.startDate {
+            if let startDate = model.startDate {
                 
                 let threshold = EventPackageConfiguration
                     .eventActiveMinuteThreshold
@@ -51,8 +50,8 @@ public class EventViewModel<Event: BaseEvent> {
             
         } else {
             
-            if let start = event.startDate,
-               let end = event.endDate {
+            if let start = model.startDate,
+               let end = model.endDate {
                 
                 if now >= start && now <= end {
                     return true
@@ -68,11 +67,11 @@ public class EventViewModel<Event: BaseEvent> {
                 
             }
             
-            if let start = event.startDate {
+            if let start = model.startDate {
                 return start.isToday
             }
             
-            if let end = event.endDate {
+            if let end = model.endDate {
                 return end.isToday
             }
             
@@ -140,7 +139,7 @@ public class EventViewModel<Event: BaseEvent> {
     }
     
     open var isLongEvent: Bool {
-        if let startDate = event.startDate, let endDate = event.endDate {
+        if let startDate = model.startDate, let endDate = model.endDate {
             
             let calendar = Calendar.current
             
@@ -160,7 +159,7 @@ public class EventViewModel<Event: BaseEvent> {
     
     open var subtitle: String {
         
-        if let startDate = event.startDate {
+        if let startDate = model.startDate {
             
             if self.isActive {
                 
@@ -186,7 +185,7 @@ public class EventViewModel<Event: BaseEvent> {
 
         var ticket = ""
 
-        if let extras = event.extras {
+        if let extras = model.extras {
 
             if let isFree = extras.isFree, isFree {
                 ticket += " • " + String.localized("Free")
@@ -202,18 +201,22 @@ public class EventViewModel<Event: BaseEvent> {
 
     }
 
+    open var isLiked: Bool {
+        return EventService.isLiked(id: model.id as! MMEvents.Event.ID)
+    }
+    
     /// This provides information based on the the extra information.
     /// You probably want to override this.
     open var locationRepresentation: String {
 
-        if let isMovingAct = event.extras?.isMovingAct, isMovingAct {
+        if let isMovingAct = model.extras?.isMovingAct, isMovingAct {
             return "Moving Act"
         }
 
 //        if let location = getLocation() {
 //            return location.name
 //        } else
-        if let locationName = event.extras?.location {
+        if let locationName = model.extras?.location {
             return locationName
         } else {
             return String.localized("LocationNotKnown")
@@ -229,7 +232,7 @@ public class EventViewModel<Event: BaseEvent> {
 //            return "\(timeComponents.day), \(timeComponents.date) \(timeComponents.startTime) - \(timeComponents.endTime)"
 //        }
 
-        if let startDate = event.startDate, let endDate = event.endDate {
+        if let startDate = model.startDate, let endDate = model.endDate {
 
             if Calendar.current.component(.day, from: startDate) != Calendar.current.component(.day, from: endDate) {
                 return "\(timeComponents.day), \(timeComponents.date) \(timeComponents.startTime) - \(startDate.format(format: "EEEE")[...1] + ", " + endDate.format(format: "dd.MM. HH:mm"))"
@@ -237,7 +240,7 @@ public class EventViewModel<Event: BaseEvent> {
                 return "\(timeComponents.day), \(timeComponents.date) \(timeComponents.startTime) - \(timeComponents.endTime)"
             }
 
-        } else if let startDate = event.startDate {
+        } else if let startDate = model.startDate {
 
             if Calendar.current.component(.hour, from: startDate) == 0 && Calendar.current.component(.minute, from: startDate) == 0 {
                 return "\(timeComponents.day), \(timeComponents.date)"
@@ -254,7 +257,7 @@ public class EventViewModel<Event: BaseEvent> {
 
     open var countdownString: String {
 
-        guard let startDate = event.startDate else { return "" }
+        guard let startDate = model.startDate else { return "" }
 
         return "in \(startDate.minuteInterval())min"
 
@@ -262,10 +265,10 @@ public class EventViewModel<Event: BaseEvent> {
     
     open var time: (day: String, date: String, startTime: String, endTime: String) {
 
-        let day = String(event.startDate?.format(format: "EEEE")[...1] ?? "")
-        let date = event.startDate?.format(format: "dd.MM.") ?? ""
-        let startTime = event.startDate?.format(format: "HH:mm") ?? ""
-        let endTime = event.endDate?.format(format: "HH:mm") ?? ""
+        let day = String(model.startDate?.format(format: "EEEE")[...1] ?? "")
+        let date = model.startDate?.format(format: "dd.MM.") ?? ""
+        let startTime = model.startDate?.format(format: "HH:mm") ?? ""
+        let endTime = model.endDate?.format(format: "HH:mm") ?? ""
 
         return (day, date, startTime, endTime)
 

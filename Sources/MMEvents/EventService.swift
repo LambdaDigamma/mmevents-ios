@@ -99,3 +99,66 @@ extension EventService {
     }
     
 }
+
+private let keyLikes = "likedEventIDs"
+
+extension EventServiceProtocol {
+    
+    // MARK: - Like Handling
+    
+    public static func getLikedIDs() -> [Event.ID] {
+        
+        let likeIDs = UserDefaults.standard.array(forKey: keyLikes) as? [Event.ID]
+        
+        return likeIDs ?? []
+        
+    }
+    
+    public static func toggleLike(for id: Event.ID) -> Bool {
+        
+        var likedIDs = getLikedIDs()
+        var isLiked = false
+        
+        if let likedIndex = likedIDs.firstIndex(of: id) {
+            
+            likedIDs.remove(at: likedIndex)
+            isLiked = false
+            
+        } else {
+            
+            likedIDs.append(id)
+            isLiked = true
+            
+        }
+        
+        UserDefaults.standard.set(likedIDs.sorted(), forKey: keyLikes)
+        
+        return isLiked
+        
+    }
+    
+    public static func setLikeStatus(likeStatus: Bool, for id: Event.ID) {
+        
+        var likedIDs = getLikedIDs()
+        
+        if likeStatus {
+            likedIDs.append(id)
+        } else {
+            likedIDs.removeAll(where: { $0 == id })
+        }
+        
+        let set = Set(likedIDs)
+        
+        let array = Array(set)
+        
+        UserDefaults.standard.set(array.sorted(), forKey: keyLikes)
+        
+    }
+    
+    public static func isLiked(id: Event.ID) -> Bool {
+        
+        return getLikedIDs().first(where: { $0 == id }) != nil
+        
+    }
+    
+}

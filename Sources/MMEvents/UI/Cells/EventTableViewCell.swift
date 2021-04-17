@@ -21,21 +21,19 @@ public class EventTableViewCell: UITableViewCell {
     lazy var subtitleLabel = { ViewFactory.label() }()
     lazy var heartImageView = { ViewFactory.imageView() }()
     
-    public var event: Event? {
+    public var event: EventViewModel<Event>? {
         didSet {
             
             guard let event = event else { return }
             
-            self.titleLabel.text = event.name
-//            self.subtitleLabel.text = event.subtitle // TODO: Add Subtitle
+            self.titleLabel.text = event.model.name
+            self.subtitleLabel.text = event.subtitle
             
-            // TODO: Add Likes
+            if event.isLiked {
+                self.heartImageView.image = Images.heartFill.withRenderingMode(.alwaysTemplate)
+            }
             
-//            if event.isLiked {
-//                self.heartImageView.image = Images.heartFill.withRenderingMode(.alwaysTemplate)
-//            }
-            
-            if let color = event.extras?.color {
+            if let color = event.model.extras?.color {
                 
                 if color == "yellow" {
                     self.indicatorView.backgroundColor = EventColors.yellow
@@ -77,7 +75,7 @@ public class EventTableViewCell: UITableViewCell {
         self.heartImageView.image = nil
         
     }
-    
+     
     // MARK: - Private Methods
     
     private func setupConstraints() {

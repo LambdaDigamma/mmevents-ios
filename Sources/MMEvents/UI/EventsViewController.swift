@@ -39,7 +39,7 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     // MARK: - Data
     
-    public var events: [Event] = []
+    public var events: [EventViewModel<Event>] = []
     private var currentDisplayMode = DisplayMode.overview(favouriteEvents: [], activeEvents: [], upcomingEvents: []) {
         didSet {
             DispatchQueue.main.async {
@@ -97,7 +97,7 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
         self.title = title
         self.isSearchEnabled = isSearchEnabled
-        self.events = events
+        self.events = events.map { EventViewModel(event: $0) }
         self.currentDisplayMode = displayMode
         self.rebuildData()
         
@@ -216,20 +216,12 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
     }
     
-    open func filterActive(events: [Event]) -> [Event] {
-        
-        return events
-        
-//        return events.filter { $0.isActive } // TODO: Active Filter
-        
+    open func filterActive(events: [EventViewModel<Event>]) -> [EventViewModel<Event>] {
+        return events.filter { $0.isActive }
     }
     
-    open func filterUpcoming(events: [Event]) -> [Event] {
-        
-        return events
-        
-//        return events.filter { !$0.isActive } // TODO: Upcoming Filter
-        
+    open func filterUpcoming(events: [EventViewModel<Event>]) -> [EventViewModel<Event>] {
+        return events.filter { !$0.isActive }
     }
     
     @objc private func updateUI() {
@@ -247,9 +239,9 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     public func buildOverview() -> DisplayMode {
         
-        let favourites: [Event] = events //.filter { $0.isLiked } // TODO: Liked
-        let active: [Event] = filterActive(events: events)
-        let upcoming: [Event] = filterUpcoming(events: events)
+        let favourites: [EventViewModel<Event>] = events.filter { $0.isLiked }
+        let active: [EventViewModel<Event>] = filterActive(events: events)
+        let upcoming: [EventViewModel<Event>] = filterUpcoming(events: events)
         
         var upcomingCount = upcoming.count
         var favouritesCount = favourites.count
@@ -261,8 +253,8 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
             favouritesCount = numberOfDisplayedUpcomingFavourites
         }
         
-        let upcomingReduced: [Event] = Array(upcoming.prefix(through: upcomingCount - 1))
-        let favouritesReduced: [Event] = Array(favourites.prefix(through: favouritesCount - 1))
+        let upcomingReduced: [EventViewModel<Event>] = Array(upcoming.prefix(through: upcomingCount - 1))
+        let favouritesReduced: [EventViewModel<Event>] = Array(favourites.prefix(through: favouritesCount - 1))
         
         return DisplayMode.overview(favouriteEvents: favouritesReduced, activeEvents: active, upcomingEvents: upcomingReduced)
         
@@ -280,11 +272,11 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
         let searchTerm = searchController.searchBar.text ?? ""
         
-        var filteredEvents: [Event] = []
+        var filteredEvents: [EventViewModel<Event>] = []
         
         if isFiltering() {
             
-            let names = events.map { $0.name }
+            let names = events.map { $0.model }.map { $0.name }
             let results = fuse.search(searchTerm, in: names)
             
             filteredEvents = results.compactMap { (index, score, matchedRanges) in
@@ -309,7 +301,7 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     public func buildFavourites() -> DisplayMode {
         
-        let favouriteEvents = events // .filter { $0.isLiked } TODO: liked
+        let favouriteEvents = events.filter { $0.isLiked }
         
         let keyedEvents = eventsToKeyed(favouriteEvents)
         
@@ -317,17 +309,17 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
     }
     
-    private func eventsToKeyed(_ events: [Event]) -> [(String, [Event])] {
+    private func eventsToKeyed(_ events: [EventViewModel<Event>]) -> [(String, [EventViewModel<Event>])] {
         
-        var keyedEvents: [String: [Event]] = [:]
+        var keyedEvents: [String: [EventViewModel<Event>]] = [:]
         
-        for event in events {
+        for viewModel in events {
             
-            let key = event.startDate?.format(format: "EEEE, dd.MM.yyyy") ?? "nicht bekannt"
+            let key = viewModel.model.startDate?.format(format: "EEEE, dd.MM.yyyy") ?? "nicht bekannt"
             
             var kEvent = keyedEvents[key] ?? []
             
-            kEvent.append(event)
+            kEvent.append(viewModel)
             
             keyedEvents[key] = kEvent
             
@@ -371,7 +363,7 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     // MARK: - Public Callbacks
     
-    open func showEventDetailViewController(for event: Event) {
+    open func showEventDetailViewController(for event: EventViewModel<Event>) {
         
 //        let viewModel = EventDetailsViewModel(model: event)
 //        let detailViewController = EventDetailViewController(viewModel: viewModel)
@@ -663,7 +655,7 @@ extension EventsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // MARK: - Cells
     
-    private func eventCell(for event: Event, at indexPath: IndexPath) -> EventTableViewCell {
+    private func eventCell(for event: EventViewModel<Event>, at indexPath: IndexPath) -> EventTableViewCell {
         
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as EventTableViewCell
         
