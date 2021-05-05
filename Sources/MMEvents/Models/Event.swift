@@ -29,6 +29,7 @@ public struct Event: BaseEvent {
     
     // Relations
     public var page: Page? = nil
+    public var place: Place? = nil
     
     public enum CodingKeys: String, CodingKey {
         case id = "id"
@@ -44,6 +45,7 @@ public struct Event: BaseEvent {
         case extras = "extras"
         case pageID = "page_id"
         case page = "page"
+        case place = "place"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -56,6 +58,7 @@ extension Event {
         let decoder = JSONDecoder()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z"
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
         
         decoder.dateDecodingStrategy = .formatted(formatter)
         decoder.keyDecodingStrategy = .useDefaultKeys

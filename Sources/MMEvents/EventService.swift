@@ -12,9 +12,13 @@ import Cache
 
 public protocol EventServiceProtocol {
     
+    func loadEvents() -> AnyPublisher<[Event], Error>
+    
     func loadEventsFromNetwork() -> AnyPublisher<[Event], Error>
     
     func loadEventsFromPersistence() -> AnyPublisher<[Event], Error>
+    
+    func loadStream() -> AnyPublisher<StreamConfig, Error>
     
     func invalidateCache()
     
@@ -30,9 +34,17 @@ public class EventService: EventServiceProtocol {
         self.cache = cache
     }
     
+    public func loadEvents() -> AnyPublisher<[Event], Error> {
+        return loadEventsFromNetwork()
+    }
+    
     public func loadEventsFromNetwork() -> AnyPublisher<[Event], Error> {
         
-        let request = HTTPRequest(path: Endpoint.index.path())
+        var request = HTTPRequest(path: Endpoint.index.path())
+        
+        request.queryItems = [
+            URLQueryItem(name: "page[size]", value: String(50)),
+        ]
         
         return Deferred {
             Future { promise in
@@ -76,6 +88,24 @@ public class EventService: EventServiceProtocol {
         try? cache.removeAll()
     }
     
+    public func loadStream() -> AnyPublisher<StreamConfig, Error> {
+        
+        let request = HTTPRequest(path: Endpoint.stream.path())
+        
+        return Deferred {
+            Future { promise in
+                self.loader.load(request) { (result) in
+                    promise(result)
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+        .compactMap { $0.body }
+        .decode(type: StreamConfig.self, decoder: StreamConfig.decoder)
+        .eraseToAnyPublisher()
+        
+    }
+    
 }
 
 extension EventService {
@@ -83,6 +113,7 @@ extension EventService {
     public enum Endpoint {
         case index
         case show(event: Event)
+        case stream
         
         func path() -> String {
             switch self {
@@ -90,6 +121,8 @@ extension EventService {
                     return "events"
                 case .show(let event):
                     return "events/\(event.id)"
+                case .stream:
+                    return "stream"
             }
         }
     }

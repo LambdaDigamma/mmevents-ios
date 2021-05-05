@@ -171,26 +171,26 @@ public struct ViewFactory {
         
     }
     
-//    public static func paddingLabel() -> PaddingLabel {
-//
-//        let paddingLabel = PaddingLabel()
-//
-//        paddingLabel.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return paddingLabel
-//
-//    }
-//
-//    public static func separatorView() -> SeparatorView {
-//
-//        let separatorView = SeparatorView()
-//
-//        separatorView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return separatorView
-//
-//    }
-//
+    public static func paddingLabel() -> PaddingLabel {
+
+        let paddingLabel = PaddingLabel()
+
+        paddingLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        return paddingLabel
+
+    }
+
+    public static func separatorView() -> SeparatorView {
+
+        let separatorView = SeparatorView()
+
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+
+        return separatorView
+
+    }
+
 //    public static func locationRowView() -> LocationRowView {
 //
 //        let locationRowView = LocationRowView(location: "")
@@ -200,17 +200,17 @@ public struct ViewFactory {
 //        return locationRowView
 //
 //    }
-//
-//    public static func detailDisclosureView() -> DetailDisclosureView {
-//
-//        let detailDisclosure = DetailDisclosureView()
-//
-//        detailDisclosure.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return detailDisclosure
-//
-//    }
-//
+
+    public static func detailDisclosureView() -> DetailDisclosureView {
+
+        let detailDisclosure = DetailDisclosureView()
+
+        detailDisclosure.translatesAutoresizingMaskIntoConstraints = false
+
+        return detailDisclosure
+
+    }
+
 //    public static func locationInformation() -> LocationInformationView {
 //
 //        let locationInformation = LocationInformationView()
@@ -241,15 +241,15 @@ public struct ViewFactory {
         
     }
     
-//    public static func videoPlayerView() -> VideoPlayerView {
-//
-//        let videoPlayerView = VideoPlayerView()
-//
-//        videoPlayerView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return videoPlayerView
-//
-//    }
+    public static func videoPlayerView() -> VideoPlayerView {
+
+        let videoPlayerView = VideoPlayerView()
+
+        videoPlayerView.translatesAutoresizingMaskIntoConstraints = false
+
+        return videoPlayerView
+
+    }
     
 }
 

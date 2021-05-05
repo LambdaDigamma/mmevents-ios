@@ -30,6 +30,7 @@ public protocol BaseEvent: Model, Timestamps, Stubbable, Equatable {
 //    public var entry: Entry?
 //    public var page: Page?
 
+    var place: Place? { get set }
     
     var extras: EventExtras? { get set }
     

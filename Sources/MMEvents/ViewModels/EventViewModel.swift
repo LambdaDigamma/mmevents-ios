@@ -207,22 +207,21 @@ public class EventViewModel<Event: BaseEvent> {
     
     /// This provides information based on the the extra information.
     /// You probably want to override this.
-    open var locationRepresentation: String {
+    open lazy var locationRepresentation: String = {
 
         if let isMovingAct = model.extras?.isMovingAct, isMovingAct {
             return "Moving Act"
         }
 
-//        if let location = getLocation() {
-//            return location.name
-//        } else
         if let locationName = model.extras?.location {
             return locationName
+        } else if let location = model.place {
+            return location.name
         } else {
             return String.localized("LocationNotKnown")
         }
         
-    }
+    }()
 
     open var timeString: String {
 
