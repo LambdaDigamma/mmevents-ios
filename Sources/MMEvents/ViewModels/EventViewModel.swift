@@ -163,8 +163,6 @@ public class EventViewModel<Event: BaseEvent> {
             
             if self.isActive {
                 
-                print("isactive")
-                
                 if ApplicationServerConfiguration.isMoersFestivalModeEnabled {
                     return "\(locationRepresentation) • \(String.localized("LiveNow"))"
                 } else {

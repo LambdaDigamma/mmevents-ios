@@ -191,6 +191,8 @@ open class EventDetailView: UIView, MKMapViewDelegate {
             self.subtitleLabel.accessibilityValue = value
         }.dispose(in: bag)
         
+        self.viewModel.description.bind(to: self.detailsTextView)
+        
 //        viewModel.page.observeNext { (page: Page?) in
 //            if let page = page {
 //                let viewModel = PageViewModel(page)
@@ -210,7 +212,6 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         
         self.layoutStack.axis = .vertical
         self.layoutStack.spacing = 8
-//        self.layoutStack.backgroundColor = UIColor.red
         
         // Video
         self.layoutStack.addArrangedSubview(self.videoPlayerView)

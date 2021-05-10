@@ -45,16 +45,24 @@ public class EventDetailsViewModel {
     }()
     
     public lazy var subtitle: SafeSignal<String?> = {
-        return event.map({ _ in return "" }) // $0?.detailSubtitle } // TODO:
+        event.map { event in
+            if let event = event {
+                return EventViewModel(event: event).detailSubtitle
+            } else {
+                return nil
+            }
+        }
     }()
     
     public lazy var description: SafeSignal<String?> = {
         
-        if let locale = Locale.preferredLanguages.first, locale.lowercased().contains("de") {
-            return event.map { $0?.description ?? "" }
-        }
+        return event.map { $0?.description ?? "" }
         
-        return event.map { $0?.extras?.descriptionEN ?? $0?.description ?? "" }
+//        if let locale = Locale.preferredLanguages.first, locale.lowercased().contains("de") {
+//            return event.map { $0?.description ?? "" }
+//        }
+//
+//        return event.map { $0?.extras?.descriptionEN ?? $0?.description ?? "" }
         
     }()
     
