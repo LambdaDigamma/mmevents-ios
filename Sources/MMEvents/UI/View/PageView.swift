@@ -112,6 +112,8 @@ public class PageView: UIStackView {
 
         if #available(iOS 13.0, *) {
             
+            #if !os(tvOS)
+            
             let linkView = LPLinkView(url: url)
             let provider = LPMetadataProvider()
             provider.startFetchingMetadata(for: url) { (metadata, error) in
@@ -132,6 +134,8 @@ public class PageView: UIStackView {
             
             views.append(containerView)
             addArrangedSubview(containerView)
+            
+            #endif
             
         } else {
             // Fallback on earlier versions

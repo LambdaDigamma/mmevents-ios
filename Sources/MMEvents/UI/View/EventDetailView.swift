@@ -320,10 +320,14 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         self.subtitleLabel.numberOfLines = 0
         
         self.detailsTextView.font = UIFont.systemFont(ofSize: 14)
-        self.detailsTextView.isEditable = false
+        
         self.detailsTextView.isSelectable = true
         self.detailsTextView.isScrollEnabled = false
+        
+        #if !os(tvOS)
         self.detailsTextView.dataDetectorTypes = .all
+        self.detailsTextView.isEditable = false
+        #endif
         
     }
     
@@ -336,10 +340,13 @@ open class EventDetailView: UIView, MKMapViewDelegate {
     private func setupSectionInfo() {
         
         self.ticketInfoTextView.font = UIFont.systemFont(ofSize: 14)
-        self.ticketInfoTextView.isEditable = false
         self.ticketInfoTextView.isSelectable = false
         self.ticketInfoTextView.isScrollEnabled = false
         self.ticketInfoTextView.text = String.localized("TicketMoerzzInfo")
+        
+        #if !os(tvOS)
+        self.ticketInfoTextView.isEditable = false
+        #endif
         
     }
     

@@ -9,7 +9,10 @@
 
 import UIKit
 import MapKit
+
+#if canImport(WebKit)
 import WebKit
+#endif
 
 public struct ViewFactory {
     
@@ -110,6 +113,8 @@ public struct ViewFactory {
         
     }
     
+    #if !os(tvOS)
+    
     public static func searchBar() -> UISearchBar {
         
         let searchBar = UISearchBar()
@@ -119,6 +124,8 @@ public struct ViewFactory {
         return searchBar
         
     }
+    
+    #endif
     
     public static func progressView() -> UIProgressView {
         
@@ -161,6 +168,8 @@ public struct ViewFactory {
         
     }
     
+    #if canImport(WebKit)
+    
     public static func webView() -> WKWebView {
         
         let webView = WKWebView()
@@ -170,6 +179,8 @@ public struct ViewFactory {
         return webView
         
     }
+    
+    #endif
     
     public static func paddingLabel() -> PaddingLabel {
 

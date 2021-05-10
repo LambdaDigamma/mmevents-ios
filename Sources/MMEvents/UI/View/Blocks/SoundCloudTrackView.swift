@@ -5,6 +5,8 @@
 //  Created by Lennart Fischer on 06.02.20.
 //
 
+#if canImport(WebKit)
+
 import UIKit
 import WebKit
 
@@ -60,3 +62,5 @@ class SoundCloudTrackView: WKWebView {
     
     
 }
+
+#endif
