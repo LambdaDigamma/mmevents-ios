@@ -78,7 +78,7 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher",
         "state": {
           "branch": null,
-          "revision": "2a10bf41da75599a9f8e872dbd44fe0155a2e00c",
+          "revision": "1a0c2df04b31ed7aa318354f3583faea24f006fc",
           "version": "5.15.8"
         }
       },
@@ -97,6 +97,15 @@
         "state": {
           "branch": "master",
           "revision": "2459476fcab3a2d416bd25d1d552d3d5644c7ce4",
+          "version": null
+        }
+      },
+      {
+        "package": "MMPages",
+        "repositoryURL": "https://github.com/lambdadigamma/mmpages-ios",
+        "state": {
+          "branch": "main",
+          "revision": "c3ff1d9362c86add95dc18aa7c0c05928ef308ce",
           "version": null
         }
       },
