@@ -9,15 +9,14 @@
 import Foundation
 import MapKit
 import MMAPI
-import Bond
-import ReactiveKit
+import Combine
 
 public class EventDetailsViewModel {
     
     public private(set) var config: EventDetailViewConfig?
     public private(set) var model: Event?
-    public let observableConfig = SafeReplayOneSubject<EventDetailViewConfig?>()
-    public let event = SafeReplayOneSubject<Event?>()
+    public let observableConfig = CurrentValueSubject<EventDetailViewConfig?, Never>(nil)
+    public let event = CurrentValueSubject<Event?, Never>(nil)
     
     public init(model: Event?, config: EventDetailViewConfig? = EventDetailViewConfig()) {
         self.config = config
@@ -40,11 +39,11 @@ public class EventDetailsViewModel {
         return URL(string: model?.url ?? "")
     }
     
-    public lazy var title: SafeSignal<String?> = {
-        return event.map { $0?.name }
+    public lazy var title: AnyPublisher<String?, Never> = {
+        return event.map { $0?.name }.eraseToAnyPublisher()
     }()
     
-    public lazy var subtitle: SafeSignal<String?> = {
+    public lazy var subtitle: AnyPublisher<String?, Never> = {
         event.map { event in
             if let event = event {
                 return EventViewModel(event: event).detailSubtitle
@@ -52,11 +51,12 @@ public class EventDetailsViewModel {
                 return nil
             }
         }
+        .eraseToAnyPublisher()
     }()
     
-    public lazy var description: SafeSignal<String?> = {
+    public lazy var description: AnyPublisher<String?, Never> = {
         
-        return event.map { $0?.description ?? "" }
+        return event.map { $0?.description ?? "" }.eraseToAnyPublisher()
         
 //        if let locale = Locale.preferredLanguages.first, locale.lowercased().contains("de") {
 //            return event.map { $0?.description ?? "" }
@@ -66,15 +66,15 @@ public class EventDetailsViewModel {
         
     }()
     
-    public lazy var imageURL: SafeSignal<URL?> = {
-        return event.map { $0?.image }
+    public lazy var imageURL: AnyPublisher<URL?, Never> = {
+        return event.map { $0?.image }.eraseToAnyPublisher()
     }()
     
-    public lazy var url: SafeSignal<URL?> = {
-        return event.map { URL(string: $0?.url ?? "") }
+    public lazy var url: AnyPublisher<URL?, Never> = {
+        return event.map { URL(string: $0?.url ?? "") }.eraseToAnyPublisher()
     }()
-    
-    public lazy var location: SafeSignal<String?> = {
+
+    public lazy var location: AnyPublisher<String?, Never> = {
         
         return event.map {
             
@@ -97,11 +97,11 @@ public class EventDetailsViewModel {
                 return String.localized("NotKnownLoc")
             }
             
-        }
+        }.eraseToAnyPublisher()
         
     }()
     
-    public lazy var locationIsSet: SafeSignal<Bool> = {
+    public lazy var locationIsSet: AnyPublisher<Bool, Never> = {
         
         return event.map {
             
@@ -113,11 +113,11 @@ public class EventDetailsViewModel {
                 return false
             }
             
-        }
+        }.eraseToAnyPublisher()
         
     }()
     
-    public lazy var isWebsiteButtonEnabled: SafeSignal<Bool> = {
+    public lazy var isWebsiteButtonEnabled: AnyPublisher<Bool, Never> = {
         
         return event.map {
             
@@ -127,97 +127,98 @@ public class EventDetailsViewModel {
                 return false
             }
             
-        }
+        }.eraseToAnyPublisher()
         
     }()
     
-    public lazy var websiteUIAlpha: SafeSignal<CGFloat> = {
-        return isWebsiteButtonEnabled.map { return $0 ? 1.0 : 0.5 }
+    public lazy var websiteUIAlpha: AnyPublisher<CGFloat, Never> = {
+        return isWebsiteButtonEnabled.map { return $0 ? 1.0 : 0.5 }.eraseToAnyPublisher()
     }()
     
-    public lazy var hideTicketText: SafeSignal<Bool> = {
+    public lazy var hideTicketText: AnyPublisher<Bool, Never> = {
         return event.map {
             return !($0?.extras?.visitWithExtraTicket ?? false)
-        }
+        }.eraseToAnyPublisher()
     }()
     
-    public lazy var showMovingAct: SafeSignal<Bool> = {
-        return event.map { $0?.extras?.isMovingAct ?? false }
+    public lazy var showMovingAct: AnyPublisher<Bool, Never> = {
+        return event.map { $0?.extras?.isMovingAct ?? false }.eraseToAnyPublisher()
     }()
     
-    public lazy var subtitleAccessibiityLabel: SafeSignal<String?> = {
+    public lazy var subtitleAccessibiityLabel: AnyPublisher<String?, Never> = {
         return event.map {
             $0?.name
-        }
+        }.eraseToAnyPublisher()
     }()
     
 //    public lazy var page: SafeSignal<Page?> = {
 //        return event.map { $0?.page }
 //    }()
     
-    public lazy var showVideo: SafeSignal<Bool> = {
+    public lazy var showVideo: AnyPublisher<Bool, Never> = {
         
         let hasVideoURL = observableConfig.map { $0?.videoURL != nil }
         let shouldShowVideo = observableConfig.map { $0?.showVideo ?? false }
         
-        return combineLatest(hasVideoURL, shouldShowVideo) { (hasVideoURL, shouldShowVideo) -> Bool in
-            return hasVideoURL && shouldShowVideo
-        }
+        return Publishers
+            .CombineLatest(hasVideoURL, shouldShowVideo)
+            .map { (hasVideoURL, shouldShowVideo) -> Bool in
+                return hasVideoURL && shouldShowVideo
+            }
+            .eraseToAnyPublisher()
         
     }()
     
-    public lazy var showImage: SafeSignal<Bool> = {
+    public lazy var showImage: AnyPublisher<Bool, Never> = {
         
         let hasImage = self.imageURL.map { $0 != nil }
         let shouldShowImage = observableConfig.map { $0?.showImage ?? false }
         
-        return combineLatest(hasImage, shouldShowImage) { (hasImage, shouldShowImage) -> Bool in
-            return hasImage && shouldShowImage
-        }
+        return Publishers
+            .CombineLatest(hasImage, shouldShowImage)
+            .map { (hasImage, shouldShowImage) -> Bool in
+                return hasImage && shouldShowImage
+            }
+            .eraseToAnyPublisher()
         
     }()
     
-    public lazy var showTitleSubtitle: SafeSignal<Bool> = {
-        return Signal {
-            return true
-        }
+    public lazy var showTitleSubtitle: AnyPublisher<Bool, Never> = {
+        return Just(true).eraseToAnyPublisher()
     }()
     
-    public lazy var showPage: SafeSignal<Bool> = {
-        return event.map { $0?.page != nil }
+    public lazy var showPage: AnyPublisher<Bool, Never> = {
+        return event.map { $0?.page != nil }.eraseToAnyPublisher()
     }()
     
-    public lazy var showMore: SafeSignal<Bool> = {
-        return Signal {
-            return false
-        }
+    public lazy var showMore: AnyPublisher<Bool, Never> = {
+        return Just(false).eraseToAnyPublisher()
     }()
     
-    public lazy var showTicketInfo: SafeSignal<Bool> = {
-        return Signal {
-            return true
-        }
+    public lazy var showTicketInfo: AnyPublisher<Bool, Never> = {
+        return Just(true).eraseToAnyPublisher()
     }()
     
-    public lazy var showLocation: SafeSignal<Bool> = {
+    public lazy var showLocation: AnyPublisher<Bool, Never> = {
         
-        let hasLocation = SafeSignal(just: true)
+        let hasLocation = Just(true)
         let shouldShowLocation = observableConfig.map { $0?.showLocation ?? false }
         
-        return combineLatest(hasLocation, shouldShowLocation) { (hasLocation, shouldShowLocation) -> Bool in
-            return hasLocation && shouldShowLocation
-        }
+        return Publishers
+            .CombineLatest(hasLocation, shouldShowLocation)
+            .map { (hasLocation, shouldShowLocation) -> Bool in
+                return hasLocation && shouldShowLocation
+            }
+            .eraseToAnyPublisher()
         
     }()
     
-    public lazy var streamURL: SafeSignal<URL?> = {
-        return observableConfig.map { $0?.videoURL }
+    public lazy var streamURL: AnyPublisher<URL?, Never> = {
+        return observableConfig.map { $0?.videoURL }.eraseToAnyPublisher()
     }()
     
-    public lazy var showNoInformtation: SafeSignal<Bool> = {
-        return Signal {
-            return self.event == nil
-        }
+    public lazy var showNoInformtation: AnyPublisher<Bool, Never> = {
+        return Just(false).eraseToAnyPublisher()
     }()
     
 }

@@ -10,13 +10,34 @@ import UIKit
 import MapKit
 import MMUI
 import Gestalt
-import Bond
-import ReactiveKit
 import AVFoundation
+import Nuke
+import Combine
 
 // TODO: Add Support for Moving Acts
 
 public let readableContentConstant: CGFloat = 20
+
+#if canImport(UIKit)
+import UIKit
+
+extension UIFont {
+    
+    public static func preferredFont(
+        for style: TextStyle,
+        weight: Weight,
+        compatibleWith traitCollection: UITraitCollection? = nil
+    ) -> UIFont {
+        let metrics = UIFontMetrics(forTextStyle: style)
+        let desc = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style, compatibleWith: traitCollection)
+        let font = UIFont.systemFont(ofSize: desc.pointSize, weight: weight)
+        return metrics.scaledFont(for: font)
+    }
+    
+}
+
+#endif
+
 
 public struct EventDetailViewConfig: Codable {
     
@@ -61,6 +82,8 @@ open class EventDetailView: UIView, MKMapViewDelegate {
     deinit {
         player?.pause()
     }
+    
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI
     
@@ -115,16 +138,16 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         self.websiteButton.titleLabel?.adjustsFontSizeToFitWidth = true
         self.websiteButton.titleLabel?.minimumScaleFactor = 0.5
         
-        self.websiteButton.reactive.tap.observeNext {
+        self.websiteButton.addAction(UIAction(handler: { _ in
             self.websiteAction?()
-        }.dispose(in: bag)
+        }), for: .touchUpInside)
         
         self.reminderButton.setTitle("Erinnerung einrichten", for: .normal)
         self.reminderButton.isHidden = true
         
-        self.reminderButton.reactive.tap.observeNext {
+        self.reminderButton.addAction(UIAction(handler: { _ in
             self.reminderAction?()
-        }.dispose(in: bag)
+        }), for: .touchUpInside)
         
     }
     
@@ -132,7 +155,7 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         
         let readable = self.readableContentGuide
         
-        let contentConstraints = [
+        let contentConstraints: [NSLayoutConstraint] = [
             scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
             scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
@@ -174,24 +197,22 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         
         // ???: - Work with Reactive Things here?
         
-        viewModel.title.bind(to: titleLabel)
-        viewModel.subtitle.bind(to: subtitleLabel)
-//        viewModel.location.bind(to: locationView.location)
-//        viewModel.locationIsSet.bind(to: locationView.isEnabled)
-        viewModel.hideTicketText.bind(to: ticketInfoTextView.reactive.isHidden)
+        viewModel.title.assign(to: \.text, on: titleLabel).store(in: &cancellables)
+        viewModel.subtitle.assign(to: \.text, on: subtitleLabel).store(in: &cancellables)
+        viewModel.hideTicketText.assign(to: \.isHidden, on: ticketInfoTextView).store(in: &cancellables)
         
-        viewModel.imageURL.observeNext { (url: URL?) in
-            self.imageView.kf.setImage(with: url)
-        }.dispose(in: bag)
+        viewModel.imageURL.sink { (url: URL?) in
+            Nuke.loadImage(with: url, into: self.imageView)
+        }.store(in: &cancellables)
         
         /// Accessibility
         
-        viewModel.subtitle.observeNext { (value) in
+        viewModel.subtitle.sink { (value: String?) in
             self.subtitleLabel.accessibilityLabel = String.localized("EventDetailViewControllerSubtitleLabel")
             self.subtitleLabel.accessibilityValue = value
-        }.dispose(in: bag)
+        }.store(in: &cancellables)
         
-        self.viewModel.description.bind(to: self.detailsTextView)
+        self.viewModel.description.assign(to: \.text, on: self.detailsTextView).store(in: &cancellables)
         
 //        viewModel.page.observeNext { (page: Page?) in
 //            if let page = page {
@@ -202,9 +223,12 @@ open class EventDetailView: UIView, MKMapViewDelegate {
 //            }
 //        }.dispose(in: bag)
         
-        viewModel.streamURL.receive(on: DispatchQueue.main).observeNext { (streamURL) in
-            self.setupPlayer()
-        }.dispose(in: bag)
+        viewModel.streamURL
+            .receive(on: DispatchQueue.main)
+            .sink { streamURL in
+                self.setupPlayer()
+            }
+            .store(in: &cancellables)
         
     }
     
@@ -268,16 +292,13 @@ open class EventDetailView: UIView, MKMapViewDelegate {
 //        self.layoutStack.addArrangedSubview(self.locationViewContainer)
 //        self.layoutStack.setCustomSpacing(16, after: self.locationViewContainer)
         
-        viewModel.showVideo.map { !$0 }.bind(to: videoPlayerView.reactive.isHidden)
-        viewModel.showImage.map { !$0 }.bind(to: imageView.reactive.isHidden)
-        viewModel.showTitleSubtitle.map { !$0 }.bind(to: titleLabel.reactive.isHidden)
-        viewModel.showTitleSubtitle.map { !$0 }.bind(to: subtitleLabel.reactive.isHidden)
-        viewModel.showPage.bind(to: detailsTextView.reactive.isHidden)
-//        viewModel.showPage.map { !$0 }.bind(to: pageView.reactive.isHidden)
-        viewModel.showMore.map { !$0 }.bind(to: websiteButton.reactive.isHidden)
-        viewModel.showTicketInfo.map { !$0 }.bind(to: ticketInfoTextView.reactive.isHidden)
-//        viewModel.showLocation.map { !$0 }.bind(to: locationViewContainer.reactive.isHidden)
-        viewModel.showNoInformtation.map { !$0 }.bind(to: noInformationLabel.reactive.isHidden)
+        viewModel.showVideo.map { !$0 }.assign(to: \.isHidden, on: videoPlayerView).store(in: &cancellables)
+        viewModel.showImage.map { !$0 }.assign(to: \.isHidden, on: imageView).store(in: &cancellables)
+        viewModel.showPage.assign(to: \.isHidden, on: detailsTextView).store(in: &cancellables)
+        
+        viewModel.showMore.map { !$0 }.assign(to: \.isHidden, on: websiteButton).store(in: &cancellables)
+        viewModel.showTicketInfo.map { !$0 }.assign(to: \.isHidden, on: ticketInfoTextView).store(in: &cancellables)
+        viewModel.showNoInformtation.map { !$0 }.assign(to: \.isHidden, on: noInformationLabel).store(in: &cancellables)
         
     }
     
@@ -313,13 +334,13 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         self.imageView.contentMode = .scaleAspectFill
         self.imageView.clipsToBounds = true
         
-        self.titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
+        self.titleLabel.font = .preferredFont(for: .title3, weight: .semibold, compatibleWith: .current) // UIFont.boldSystemFont(ofSize: 24)
         self.titleLabel.numberOfLines = 0
         
-        self.subtitleLabel.font = UIFont.systemFont(ofSize: 16)
+        self.subtitleLabel.font = .preferredFont(forTextStyle: .body, compatibleWith: .current) // UIFont.systemFont(ofSize: 16)
         self.subtitleLabel.numberOfLines = 0
         
-        self.detailsTextView.font = UIFont.systemFont(ofSize: 14)
+        self.detailsTextView.font = .preferredFont(forTextStyle: .body, compatibleWith: .current)
         
         self.detailsTextView.isSelectable = true
         self.detailsTextView.isScrollEnabled = false
@@ -358,10 +379,6 @@ open class EventDetailView: UIView, MKMapViewDelegate {
     }
     
     // MARK: - Video Player
-    
-    public var fullscreenTap: SafeSignal<Void> {
-        return self.videoPlayerView.fullscreenButton.reactive.tap
-    }
     
     private func setupPlayer() {
         
@@ -419,23 +436,23 @@ extension EventDetailView: Themeable {
     
     public func apply(theme: Theme) {
         
-        self.backgroundColor = theme.backgroundColor
-        self.titleLabel.textColor = theme.color
-        self.subtitleLabel.textColor = theme.color.darker()
-        self.detailsTextView.textColor = theme.color
-        self.detailsTextView.backgroundColor = theme.backgroundColor
+        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
+        self.titleLabel.textColor = UIColor.label // theme.color
+        self.subtitleLabel.textColor = UIColor.secondaryLabel
+        self.detailsTextView.textColor = UIColor.secondaryLabel
+        self.detailsTextView.backgroundColor = .clear
         self.detailsTextView.tintColor = theme.accentColor
         self.websiteButton.backgroundColor = theme.accentColor
         self.websiteButton.setTitleColor(theme.navigationBarColor, for: .normal)
         self.reminderButton.backgroundColor = theme.accentColor
         self.reminderButton.setTitleColor(theme.navigationBarColor, for: .normal)
-        self.ticketInfoTextView.backgroundColor = theme.backgroundColor
-        self.ticketInfoTextView.textColor = theme.color.darker()
+        self.ticketInfoTextView.backgroundColor = .clear
+        self.ticketInfoTextView.textColor = UIColor.secondaryLabel
         self.ticketInfoTextView.tintColor = theme.accentColor
-        self.noInformationLabel.textColor = theme.color
-        self.leftSeparator.backgroundColor = theme.decentColor.darker()
+        self.noInformationLabel.textColor = UIColor.label
+        self.leftSeparator.backgroundColor = UIColor.separator
         self.leftSeparator.alpha = 0.5
-        self.rightSeparator.backgroundColor = theme.decentColor.darker()
+        self.rightSeparator.backgroundColor = UIColor.separator
         self.rightSeparator.alpha = 0.5
         
     }

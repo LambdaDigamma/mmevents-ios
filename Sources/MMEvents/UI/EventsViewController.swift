@@ -13,7 +13,8 @@ import MMUI
 import MMCommon
 import Fuse
 import Gestalt
-import os.log
+import OSLog
+import Combine
 
 open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
@@ -36,6 +37,7 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     public var sectionFavouritesTitle = String.localized("UpcomingFavourites").uppercased()
     public var sectionActiveTitle = String.localized("LiveNow").uppercased()
     public var sectionUpcomingTitle = String.localized("Upcoming").uppercased()
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Data
     
@@ -86,12 +88,16 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
     }
     
-    public init(title: String = "",
-                isSearchEnabled: Bool = true,
-                events: [Event] = [],
-                displayMode: DisplayMode = DisplayMode.overview(favouriteEvents: [],
-                                                                activeEvents: [],
-                                                                upcomingEvents: [])) {
+    public init(
+        title: String = "",
+        isSearchEnabled: Bool = true,
+        events: [Event] = [],
+        displayMode: DisplayMode = DisplayMode.overview(
+            favouriteEvents: [],
+            activeEvents: [],
+            upcomingEvents: []
+        )
+    ) {
         
         super.init(nibName: nil, bundle: nil)
         
@@ -343,21 +349,21 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     private func setupInvalidators() {
         
-        let observer1 = NotificationCenter.default.reactive.notification(name: UIApplication.willTerminateNotification)
-        let observer2 = NotificationCenter.default.reactive.notification(name: UIApplication.didEnterBackgroundNotification)
-        let observer3 = NotificationCenter.default.reactive.notification(name: UIApplication.willResignActiveNotification)
+        let observer1 = NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)
+        let observer2 = NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
+        let observer3 = NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)
         
-        observer1.observeNext { notification in
+        observer1.sink { _ in
             self.updateTimer?.invalidate()
-        }.dispose(in: bag)
+        }.store(in: &cancellables)
         
-        observer2.observeNext { notification in
+        observer2.sink { _ in
             self.updateTimer?.invalidate()
-        }.dispose(in: bag)
+        }.store(in: &cancellables)
         
-        observer3.observeNext { notification in
+        observer3.sink { _ in
             self.updateTimer?.invalidate()
-        }.dispose(in: bag)
+        }.store(in: &cancellables)
         
     }
     
@@ -682,9 +688,9 @@ extension EventsViewController: Themeable {
     public typealias Theme = ApplicationTheme
     
     public func apply(theme: Theme) {
-        self.view.backgroundColor = theme.backgroundColor
-        self.tableView.backgroundColor = theme.backgroundColor
-        self.tableView.separatorColor = theme.separatorColor
+        self.view.backgroundColor = UIColor.systemBackground // theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.systemBackground // theme.backgroundColor
+        self.tableView.separatorColor = UIColor.separator // theme.separatorColor
         self.searchController.searchBar.tintColor = theme.accentColor
         self.searchController.searchBar.keyboardAppearance = theme.statusBarStyle == .lightContent ? .dark : .light
     }

@@ -55,10 +55,12 @@ public class HintTableViewCell: UITableViewCell {
         
         let margins = contentView.layoutMarginsGuide
         
-        let constraints = [hintLabel.topAnchor.constraint(equalTo: margins.topAnchor, constant: 4),
-                           hintLabel.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
-                           hintLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
-                           hintLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: -4)]
+        let constraints: [NSLayoutConstraint] = [
+            hintLabel.topAnchor.constraint(equalTo: margins.topAnchor, constant: 4),
+            hintLabel.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
+            hintLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
+            hintLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: -4)
+        ]
         
         NSLayoutConstraint.activate(constraints)
         
@@ -77,8 +79,8 @@ extension HintTableViewCell: Themeable {
     public typealias Theme = ApplicationTheme
 
     public func apply(theme: Theme) {
-        self.backgroundColor = theme.backgroundColor
-        self.hintLabel.textColor = theme.decentColor
+        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
+        self.hintLabel.textColor = UIColor.secondaryLabel // theme.decentColor
     }
 
 }

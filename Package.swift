@@ -9,7 +9,8 @@ let package = Package(
     products: [
         .library(
             name: "MMEvents",
-            targets: ["MMEvents"]),
+            targets: ["MMEvents"]
+        ),
     ],
     dependencies: [
         .package(name: "MMAPI", url: "https://github.com/LambdaDigamma/mmapi-ios", from: "0.2.0"),
@@ -18,9 +19,6 @@ let package = Package(
         .package(name: "MMPages", url: "https://github.com/lambdadigamma/mmpages-ios", from: "0.0.2"),
         .package(name: "ModernNetworking", url: "https://github.com/lambdadigamma/modernnetworking", from: "0.1.1"),
         .package(name: "Gestalt", url: "https://github.com/regexident/Gestalt", from: "2.1.0"),
-        .package(url: "https://github.com/DeclarativeHub/Bond.git", from: "7.8.0"),
-        .package(url: "https://github.com/DeclarativeHub/ReactiveKit.git", from: "3.18.0"),
-//        .package(name: "MMPlaces", url: "https://github.com/lambdadigamma/mmplaces-ios", .branch("main")),
     ],
     targets: [
         .target(
@@ -32,11 +30,14 @@ let package = Package(
                 "MMPages",
                 "ModernNetworking",
                 "Gestalt",
-                "Bond",
-                "ReactiveKit"
-            ]),
+            ],
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .testTarget(
             name: "MMEventsTests",
-            dependencies: ["MMEvents"]),
+            dependencies: ["MMEvents"]
+        ),
     ]
 )

@@ -85,26 +85,24 @@ public class EventHeaderFooterView: UITableViewHeaderFooterView {
         
         let margins = contentView.layoutMarginsGuide
         
-        let constraints = [sectionLabel.topAnchor.constraint(equalTo: margins.topAnchor),
-                           sectionLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
-                           sectionLabel.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
-                           sectionLabel.trailingAnchor.constraint(equalTo: moreButton.leadingAnchor),
-                           moreButton.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
-                           moreButton.heightAnchor.constraint(equalToConstant: 24),
-                           moreButton.widthAnchor.constraint(lessThanOrEqualToConstant: 100),
-                           moreButton.leadingAnchor.constraint(equalTo: sectionLabel.trailingAnchor),
-                           moreButton.trailingAnchor.constraint(equalTo: margins.trailingAnchor)]
+        let constraints: [NSLayoutConstraint] = [
+            sectionLabel.topAnchor.constraint(equalTo: margins.topAnchor),
+            sectionLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
+            sectionLabel.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
+            sectionLabel.trailingAnchor.constraint(equalTo: moreButton.leadingAnchor),
+            moreButton.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
+            moreButton.heightAnchor.constraint(equalToConstant: 24),
+            moreButton.widthAnchor.constraint(lessThanOrEqualToConstant: 100),
+            moreButton.leadingAnchor.constraint(equalTo: sectionLabel.trailingAnchor),
+            moreButton.trailingAnchor.constraint(equalTo: margins.trailingAnchor)
+        ]
         
         NSLayoutConstraint.activate(constraints)
         
     }
     
     private func setupTheming() {
-        
-        
-        
         MMUIConfig.themeManager?.manage(theme: \Theme.self, for: self)
-        
     }
     
     @objc private func tapMoreButton() {
@@ -120,8 +118,8 @@ extension EventHeaderFooterView: Themeable {
     public typealias Theme = ApplicationTheme
     
     public func apply(theme: ApplicationTheme) {
-        self.backgroundColor = theme.backgroundColor
-        self.sectionLabel.textColor = theme.decentColor
+        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
+        self.sectionLabel.textColor = UIColor.secondaryLabel // theme.decentColor
         self.moreButton.setTitleColor(theme.accentColor, for: .normal)
     }
     

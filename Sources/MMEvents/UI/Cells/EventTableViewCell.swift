@@ -82,23 +82,25 @@ public class EventTableViewCell: UITableViewCell {
         
         let margins = contentView.layoutMarginsGuide
         
-        let constraints = [indicatorView.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
-                           indicatorView.topAnchor.constraint(equalTo: margins.topAnchor),
-                           indicatorView.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
-                           indicatorView.widthAnchor.constraint(equalToConstant: 2),
-                           titleLabel.leadingAnchor.constraint(equalTo: indicatorView.trailingAnchor, constant: 8),
-                           titleLabel.topAnchor.constraint(equalTo: margins.topAnchor, constant: 0),
-                           titleLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 0),
-                           titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 20),
-                           subtitleLabel.leadingAnchor.constraint(equalTo: indicatorView.trailingAnchor, constant: 8),
-                           subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-                           subtitleLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: -8),
-                           subtitleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 18),
-                           subtitleLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0),
-                           heartImageView.centerYAnchor.constraint(equalTo: margins.centerYAnchor),
-                           heartImageView.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 0),
-                           heartImageView.widthAnchor.constraint(equalToConstant: 10),
-                           heartImageView.heightAnchor.constraint(equalToConstant: 10)]
+        let constraints: [NSLayoutConstraint] = [
+            indicatorView.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
+            indicatorView.topAnchor.constraint(equalTo: margins.topAnchor),
+            indicatorView.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
+            indicatorView.widthAnchor.constraint(equalToConstant: 2),
+            titleLabel.leadingAnchor.constraint(equalTo: indicatorView.trailingAnchor, constant: 8),
+            titleLabel.topAnchor.constraint(equalTo: margins.topAnchor, constant: 0),
+            titleLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 0),
+            titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 20),
+            subtitleLabel.leadingAnchor.constraint(equalTo: indicatorView.trailingAnchor, constant: 8),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            subtitleLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: -8),
+            subtitleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 18),
+            subtitleLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0),
+            heartImageView.centerYAnchor.constraint(equalTo: margins.centerYAnchor),
+            heartImageView.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 0),
+            heartImageView.widthAnchor.constraint(equalToConstant: 10),
+            heartImageView.heightAnchor.constraint(equalToConstant: 10)
+        ]
         
         NSLayoutConstraint.activate(constraints)
         
@@ -135,10 +137,10 @@ extension EventTableViewCell: Themeable {
     public typealias Theme = ApplicationTheme
     
     public func apply(theme: ApplicationTheme) {
-        self.backgroundColor = theme.backgroundColor
+        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
         self.indicatorView.backgroundColor = theme.accentColor
-        self.titleLabel.textColor = theme.color
-        self.subtitleLabel.textColor = theme.color.darker()
+        self.titleLabel.textColor = UIColor.label // theme.color
+        self.subtitleLabel.textColor = UIColor.secondaryLabel // theme.color.darker()
         self.heartImageView.tintColor = theme.accentColor
     }
     

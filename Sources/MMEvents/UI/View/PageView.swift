@@ -9,7 +9,9 @@ import UIKit
 import MMAPI
 import LinkPresentation
 import MMUI
+import OSLog
 
+public let subsystem = "com.lambdadigamma.mmevents"
 public let eventDetailMargin: CGFloat = 16// UIDevice.current.userInterfaceIdiom == .phone ? 16 : 0
 
 public class PageView: UIStackView {
@@ -19,6 +21,7 @@ public class PageView: UIStackView {
             addViewsFromViewModel()
         }
     }
+    private let logger: Logger = Logger(subsystem: subsystem, category: "PageView")
     
     private var views: [UIView] = []
     
@@ -79,11 +82,8 @@ public class PageView: UIStackView {
                 self.addLinkBlock(linkBlock: externalLink)
                 
             case .unknown:
-                print("Unknown")
-                
-            default:
-                break
-                
+                logger.log("This block type is unknown.")
+            
             }
             
         }

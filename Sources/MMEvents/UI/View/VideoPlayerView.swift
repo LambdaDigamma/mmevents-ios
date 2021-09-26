@@ -7,7 +7,6 @@
 
 import UIKit
 import AVFoundation
-import ReactiveKit
 
 open class VideoPlayerView: UIView {
     
@@ -29,14 +28,15 @@ open class VideoPlayerView: UIView {
         
         self.addSubview(fullscreenButton)
         
-        self.fullscreenButton.setImage(UIImage(named: "fullscreen")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        let fullscreenImage = UIImage(named: "fullscreen")?.withRenderingMode(.alwaysTemplate)
+        self.fullscreenButton.setImage(fullscreenImage, for: .normal)
         self.fullscreenButton.tintColor = UIColor.white
         
     }
     
     private func setupConstraints() {
         
-        let constraints = [
+        let constraints: [NSLayoutConstraint] = [
             fullscreenButton.widthAnchor.constraint(equalToConstant: 40),
             fullscreenButton.heightAnchor.constraint(equalToConstant: 40),
             fullscreenButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8),

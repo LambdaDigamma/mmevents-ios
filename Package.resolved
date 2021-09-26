@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "Bond",
-        "repositoryURL": "https://github.com/DeclarativeHub/Bond.git",
-        "state": {
-          "branch": null,
-          "revision": "146943c0bc03a93c48fb6c57db4e39f4b38ba74b",
-          "version": "7.8.1"
-        }
-      },
-      {
         "package": "Cache",
         "repositoryURL": "https://github.com/hyperoslo/Cache",
         "state": {
@@ -60,17 +51,8 @@
         "repositoryURL": "https://github.com/johnsundell/ink.git",
         "state": {
           "branch": null,
-          "revision": "bd223a2482449507bd3286cb262c962d32d81e4b",
-          "version": "0.5.0"
-        }
-      },
-      {
-        "package": "Kingfisher",
-        "repositoryURL": "https://github.com/onevcat/Kingfisher",
-        "state": {
-          "branch": null,
-          "revision": "1a0c2df04b31ed7aa318354f3583faea24f006fc",
-          "version": "5.15.8"
+          "revision": "77c3d8953374a9cf5418ef0bd7108524999de85a",
+          "version": "0.5.1"
         }
       },
       {
@@ -78,8 +60,8 @@
         "repositoryURL": "https://github.com/LambdaDigamma/mmapi-ios",
         "state": {
           "branch": null,
-          "revision": "17a459b9277b5a86e18cbbfed9da059c3416f9ca",
-          "version": "0.2.1"
+          "revision": "2c9bce90e8e351a49dc82e53ecb3c09f18aea414",
+          "version": "0.2.2"
         }
       },
       {
@@ -114,8 +96,8 @@
         "repositoryURL": "https://github.com/lambdadigamma/modernnetworking",
         "state": {
           "branch": null,
-          "revision": "758c3f92475ca504b78ff6ac15d616be7f6a2aa5",
-          "version": "0.1.1"
+          "revision": "bac9aec83e259206600ed4ef8b7a146dc6bc9bc8",
+          "version": "0.1.2"
         }
       },
       {
@@ -128,30 +110,12 @@
         }
       },
       {
-        "package": "ReactiveKit",
-        "repositoryURL": "https://github.com/DeclarativeHub/ReactiveKit.git",
-        "state": {
-          "branch": null,
-          "revision": "5b167a3fa7288395cfcba23dac84489b01d3b2f0",
-          "version": "3.18.1"
-        }
-      },
-      {
         "package": "Resolver",
         "repositoryURL": "https://github.com/hmlongco/Resolver",
         "state": {
           "branch": null,
-          "revision": "e0bcbc721818328c192a1eb22c6a6ca48029e550",
-          "version": "1.4.1"
-        }
-      },
-      {
-        "package": "SwiftCSV",
-        "repositoryURL": "https://github.com/swiftcsv/SwiftCSV",
-        "state": {
-          "branch": null,
-          "revision": "ad2042d0ba2ea260246b0e1b1d5710cbc53e2836",
-          "version": "0.6.0"
+          "revision": "609908e0b67911ebf7386609552a48d4ec07958e",
+          "version": "1.4.4"
         }
       }
     ]
