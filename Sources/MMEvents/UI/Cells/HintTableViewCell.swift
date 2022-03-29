@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 
 import UIKit
-import Gestalt
 import MMUI
 
 public class HintTableViewCell: UITableViewCell {
@@ -68,21 +67,11 @@ public class HintTableViewCell: UITableViewCell {
     
     private func setupTheming() {
         
-        MMUIConfig.themeManager?.manage(theme: \Theme.self, for: self)
+        self.backgroundColor = UIColor.systemBackground
+        self.hintLabel.textColor = UIColor.secondaryLabel
         
     }
     
-}
-
-extension HintTableViewCell: Themeable {
-
-    public typealias Theme = ApplicationTheme
-
-    public func apply(theme: Theme) {
-        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
-        self.hintLabel.textColor = UIColor.secondaryLabel // theme.decentColor
-    }
-
 }
 
 #endif

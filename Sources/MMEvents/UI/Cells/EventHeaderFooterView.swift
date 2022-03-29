@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 
 import UIKit
-import Gestalt
 import MMUI
 
 public class EventHeaderFooterView: UITableViewHeaderFooterView {
@@ -102,25 +101,15 @@ public class EventHeaderFooterView: UITableViewHeaderFooterView {
     }
     
     private func setupTheming() {
-        MMUIConfig.themeManager?.manage(theme: \Theme.self, for: self)
+        self.backgroundColor = UIColor.systemBackground
+        self.sectionLabel.textColor = UIColor.secondaryLabel
+        self.moreButton.setTitleColor(EventPackageConfiguration.accentColor, for: .normal)
     }
     
     @objc private func tapMoreButton() {
         
         action?()
         
-    }
-    
-}
-
-extension EventHeaderFooterView: Themeable {
-    
-    public typealias Theme = ApplicationTheme
-    
-    public func apply(theme: ApplicationTheme) {
-        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
-        self.sectionLabel.textColor = UIColor.secondaryLabel // theme.decentColor
-        self.moreButton.setTitleColor(theme.accentColor, for: .normal)
     }
     
 }

@@ -9,7 +9,6 @@
 import UIKit
 import MapKit
 import MMUI
-import Gestalt
 import AVFoundation
 import Nuke
 import Combine
@@ -308,7 +307,24 @@ open class EventDetailView: UIView, MKMapViewDelegate {
     
     private func setupTheming() {
         
-        MMUIConfig.themeManager?.manage(theme: \ApplicationTheme.self, for: self)
+        self.backgroundColor = UIColor.systemBackground
+        self.titleLabel.textColor = UIColor.label
+        self.subtitleLabel.textColor = UIColor.secondaryLabel
+        self.detailsTextView.textColor = UIColor.secondaryLabel
+        self.detailsTextView.backgroundColor = .clear
+        self.detailsTextView.tintColor = EventPackageConfiguration.accentColor
+        self.websiteButton.backgroundColor = EventPackageConfiguration.accentColor
+        self.websiteButton.setTitleColor(EventPackageConfiguration.onAccentColor, for: .normal)
+        self.reminderButton.backgroundColor = EventPackageConfiguration.accentColor
+        self.reminderButton.setTitleColor(EventPackageConfiguration.onAccentColor, for: .normal)
+        self.ticketInfoTextView.backgroundColor = .clear
+        self.ticketInfoTextView.textColor = UIColor.secondaryLabel
+        self.ticketInfoTextView.tintColor = EventPackageConfiguration.accentColor
+        self.noInformationLabel.textColor = UIColor.label
+        self.leftSeparator.backgroundColor = UIColor.separator
+        self.leftSeparator.alpha = 0.5
+        self.rightSeparator.backgroundColor = UIColor.separator
+        self.rightSeparator.alpha = 0.5
         
     }
     
@@ -425,35 +441,6 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         }
         
         return annotationView
-        
-    }
-    
-}
-
-extension EventDetailView: Themeable {
-    
-    public typealias Theme = ApplicationTheme
-    
-    public func apply(theme: Theme) {
-        
-        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
-        self.titleLabel.textColor = UIColor.label // theme.color
-        self.subtitleLabel.textColor = UIColor.secondaryLabel
-        self.detailsTextView.textColor = UIColor.secondaryLabel
-        self.detailsTextView.backgroundColor = .clear
-        self.detailsTextView.tintColor = theme.accentColor
-        self.websiteButton.backgroundColor = theme.accentColor
-        self.websiteButton.setTitleColor(theme.navigationBarColor, for: .normal)
-        self.reminderButton.backgroundColor = theme.accentColor
-        self.reminderButton.setTitleColor(theme.navigationBarColor, for: .normal)
-        self.ticketInfoTextView.backgroundColor = .clear
-        self.ticketInfoTextView.textColor = UIColor.secondaryLabel
-        self.ticketInfoTextView.tintColor = theme.accentColor
-        self.noInformationLabel.textColor = UIColor.label
-        self.leftSeparator.backgroundColor = UIColor.separator
-        self.leftSeparator.alpha = 0.5
-        self.rightSeparator.backgroundColor = UIColor.separator
-        self.rightSeparator.alpha = 0.5
         
     }
     

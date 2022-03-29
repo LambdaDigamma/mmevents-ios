@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 
 import UIKit
-import Gestalt
 import MMUI
 
 public class EventTableViewCell: UITableViewCell {
@@ -126,22 +125,12 @@ public class EventTableViewCell: UITableViewCell {
     
     private func setupTheming() {
         
-        MMUIConfig.themeManager?.manage(theme: \ApplicationTheme.self, for: self)
+        self.backgroundColor = UIColor.systemBackground
+        self.indicatorView.backgroundColor = EventPackageConfiguration.accentColor
+        self.titleLabel.textColor = UIColor.label
+        self.subtitleLabel.textColor = UIColor.secondaryLabel
+        self.heartImageView.tintColor = EventPackageConfiguration.accentColor
         
-    }
-    
-}
-
-extension EventTableViewCell: Themeable {
-    
-    public typealias Theme = ApplicationTheme
-    
-    public func apply(theme: ApplicationTheme) {
-        self.backgroundColor = UIColor.systemBackground // theme.backgroundColor
-        self.indicatorView.backgroundColor = theme.accentColor
-        self.titleLabel.textColor = UIColor.label // theme.color
-        self.subtitleLabel.textColor = UIColor.secondaryLabel // theme.color.darker()
-        self.heartImageView.tintColor = theme.accentColor
     }
     
 }

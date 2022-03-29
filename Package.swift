@@ -18,7 +18,7 @@ let package = Package(
         .package(name: "MMCommon", url: "https://github.com/lambdadigamma/mmcommon-ios", from: "0.0.1"),
         .package(name: "MMPages", url: "https://github.com/lambdadigamma/mmpages-ios", from: "0.0.2"),
         .package(name: "ModernNetworking", url: "https://github.com/lambdadigamma/modernnetworking", from: "0.1.1"),
-        .package(name: "Gestalt", url: "https://github.com/regexident/Gestalt", from: "2.1.0"),
+        .package(name: "Nuke", url: "https://github.com/kean/Nuke.git", from: "10.7.1")
     ],
     targets: [
         .target(
@@ -29,7 +29,7 @@ let package = Package(
                 "MMCommon",
                 "MMPages",
                 "ModernNetworking",
-                "Gestalt",
+                "Nuke"
             ],
             resources: [
                 .process("Resources")

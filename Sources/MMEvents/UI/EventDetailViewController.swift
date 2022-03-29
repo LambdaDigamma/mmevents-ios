@@ -7,7 +7,6 @@
 
 #if canImport(UIKit)
 import UIKit
-import Gestalt
 import MapKit
 import MMAPI
 

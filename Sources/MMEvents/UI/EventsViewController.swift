@@ -12,7 +12,6 @@ import UIKit
 import MMUI
 import MMCommon
 import Fuse
-import Gestalt
 import OSLog
 import Combine
 
@@ -159,7 +158,10 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     private func setupTheming() {
         
-        MMUIConfig.themeManager?.manage(theme: \ApplicationTheme.self, for: self)
+        self.view.backgroundColor = UIColor.systemBackground
+        self.tableView.backgroundColor = UIColor.systemBackground
+        self.tableView.separatorColor = UIColor.separator
+        self.searchController.searchBar.tintColor = EventPackageConfiguration.accentColor
         
     }
     
@@ -682,20 +684,5 @@ extension EventsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
 }
-
-extension EventsViewController: Themeable {
-    
-    public typealias Theme = ApplicationTheme
-    
-    public func apply(theme: Theme) {
-        self.view.backgroundColor = UIColor.systemBackground // theme.backgroundColor
-        self.tableView.backgroundColor = UIColor.systemBackground // theme.backgroundColor
-        self.tableView.separatorColor = UIColor.separator // theme.separatorColor
-        self.searchController.searchBar.tintColor = theme.accentColor
-        self.searchController.searchBar.keyboardAppearance = theme.statusBarStyle == .lightContent ? .dark : .light
-    }
-    
-}
-
 
 #endif

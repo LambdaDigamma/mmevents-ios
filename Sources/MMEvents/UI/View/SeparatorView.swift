@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Gestalt
 import MMUI
 
 public class SeparatorView: UIView {
@@ -36,20 +35,9 @@ public class SeparatorView: UIView {
     
     private func setupTheming() {
         
-        MMUIConfig.themeManager?.manage(theme: \Theme.self, for: self)
+        self.backgroundColor = UIColor.separator
         
     }
     
-    
-}
-
-extension SeparatorView: Themeable {
-    
-    public typealias Theme = ApplicationTheme
-    
-    public func apply(theme: ApplicationTheme) {
-        self.backgroundColor = theme.decentColor
-        self.alpha = 0.75
-    }
     
 }
