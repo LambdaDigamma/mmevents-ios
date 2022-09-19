@@ -24,8 +24,46 @@ public struct Event: BaseEvent {
     public var image: URL? = nil
     public var extras: EventExtras? = nil
     public var pageID: Page.ID? = nil
+    public var placeID: Place.ID? = nil
+    public var artists: [String?]? = nil
     public var createdAt: Date? = Date()
     public var updatedAt: Date? = Date()
+    
+    public init(
+        id: ID,
+        name: String,
+        description: String? = nil,
+        url: String? = nil,
+        startDate: Date? = nil,
+        endDate: Date? = nil,
+        category: String? = nil,
+        imagePath: String? = nil,
+        web: URL? = nil,
+        image: URL? = nil,
+        extras: EventExtras? = nil,
+        artists: [String]? = nil,
+        pageID: Page.ID? = nil,
+        placeID: Place.ID? = nil,
+        createdAt: Date? = Date(),
+        updatedAt: Date? = Date()
+    ) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.url = url
+        self.startDate = startDate
+        self.endDate = endDate
+        self.category = category
+        self.imagePath = imagePath
+        self.web = web
+        self.image = image
+        self.extras = extras
+        self.artists = artists
+        self.pageID = pageID
+        self.placeID = placeID
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
     
     // Relations
     public var page: Page? = nil
@@ -44,6 +82,8 @@ public struct Event: BaseEvent {
         case image = "image"
         case extras = "extras"
         case pageID = "page_id"
+        case placeID = "place_id"
+        case artists = "artists"
         case page = "page"
         case place = "place"
         case createdAt = "created_at"

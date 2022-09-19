@@ -6,9 +6,9 @@
 //  Copyright © 2019 LambdaDigamma. All rights reserved.
 //
 
+import Core
 import UIKit
 import MapKit
-import MMUI
 import AVFoundation
 import Nuke
 import Combine
@@ -307,7 +307,10 @@ open class EventDetailView: UIView, MKMapViewDelegate {
     
     private func setupTheming() {
         
+#if !os(tvOS)
         self.backgroundColor = UIColor.systemBackground
+#endif
+        
         self.titleLabel.textColor = UIColor.label
         self.subtitleLabel.textColor = UIColor.secondaryLabel
         self.detailsTextView.textColor = UIColor.secondaryLabel

@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 import ModernNetworking
 import Combine
-import MMCommon
+import Core
 @testable import MMEvents
 
 

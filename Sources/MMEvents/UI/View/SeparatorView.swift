@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import MMUI
 
 public class SeparatorView: UIView {
     

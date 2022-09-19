@@ -5,14 +5,12 @@
 //  Created by Lennart Fischer on 06.02.20.
 //
 
+import Core
 import UIKit
-import MMAPI
 import LinkPresentation
-import MMUI
 import OSLog
 
-public let subsystem = "com.lambdadigamma.mmevents"
-public let eventDetailMargin: CGFloat = 16// UIDevice.current.userInterfaceIdiom == .phone ? 16 : 0
+public let eventDetailMargin: CGFloat = 16 // UIDevice.current.userInterfaceIdiom == .phone ? 16 : 0
 
 public class PageView: UIStackView {
     
@@ -21,7 +19,7 @@ public class PageView: UIStackView {
             addViewsFromViewModel()
         }
     }
-    private let logger: Logger = Logger(subsystem: subsystem, category: "PageView")
+    private let logger: Logger = Logger(.default)
     
     private var views: [UIView] = []
     
@@ -129,8 +127,10 @@ public class PageView: UIStackView {
             linkView.layer.cornerRadius = 10
             linkView.tintColor = UIColor.white
             
-            let containerView = ContainerView(contentView: linkView,
-                                              edgeInsets: UIEdgeInsets(top: 0, left: eventDetailMargin, bottom: 0, right: eventDetailMargin))
+            let containerView = ContainerView(
+                contentView: linkView,
+                edgeInsets: UIEdgeInsets(top: 0, left: eventDetailMargin, bottom: 0, right: eventDetailMargin)
+            )
             
             views.append(containerView)
             addArrangedSubview(containerView)

@@ -5,11 +5,11 @@
 //  Created by Lennart Fischer on 06.01.21.
 //
 
+import Core
 import Foundation
-import MMCommon
 import ModernNetworking
 
-public protocol BaseEvent: Model, Timestamps, Stubbable, Equatable {
+public protocol BaseEvent: Model, Stubbable, Equatable {
     
     associatedtype ID = Identifiable
     

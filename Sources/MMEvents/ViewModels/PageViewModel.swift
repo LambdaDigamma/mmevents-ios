@@ -5,8 +5,8 @@
 //  Created by Lennart Fischer on 06.02.20.
 //
 
+import Core
 import Foundation
-import MMAPI
 
 public struct PageViewModel {
     

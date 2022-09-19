@@ -6,12 +6,12 @@
 //  Copyright © 2019 LambdaDigamma. All rights reserved.
 //
 
+import Core
 import Foundation
 import MapKit
-import MMAPI
 import Combine
 
-public class EventDetailsViewModel {
+public class EventDetailsViewModel: ObservableObject {
     
     public private(set) var config: EventDetailViewConfig?
     public private(set) var model: Event?
@@ -220,5 +220,86 @@ public class EventDetailsViewModel {
     public lazy var showNoInformtation: AnyPublisher<Bool, Never> = {
         return Just(false).eraseToAnyPublisher()
     }()
+    
+    // MARK: - Like Handling -
+    
+    public var isLiked: Bool {
+        set {
+            guard let id = model?.id else { return }
+            Self.setLikeStatus(likeStatus: newValue, for: id)
+        }
+        get {
+            guard let id = model?.id else { return false }
+            return Self.isLiked(id: id)
+        }
+    }
+    
+}
+
+
+
+public extension EventDetailsViewModel {
+    
+    static let keyLikes = "LikeIDs"
+    
+    static func getLikedIDs() -> [Int] {
+        
+        let likeIDs = UserDefaults.standard.array(forKey: keyLikes) as? [Int]
+        
+        return likeIDs ?? []
+        
+    }
+    
+    static func toggleLike(for id: Int) -> Bool {
+        
+        var likedIDs = getLikedIDs()
+        var isLiked = false
+        
+        if let likedIndex = likedIDs.firstIndex(of: id) {
+            
+            likedIDs.remove(at: likedIndex)
+            isLiked = false
+            
+        } else {
+            
+            likedIDs.append(id)
+            isLiked = true
+            
+        }
+        
+        UserDefaults.standard.set(likedIDs.sorted(), forKey: keyLikes)
+        
+        return isLiked
+        
+    }
+    
+    static func setLikeStatus(likeStatus: Bool, for id: Int) {
+        
+        var likedIDs = getLikedIDs()
+        
+        if likeStatus {
+            likedIDs.append(id)
+        } else {
+            likedIDs.removeAll(where: { $0 == id })
+        }
+        
+        let set = Set(likedIDs)
+        
+        let array = Array(set)
+        
+        UserDefaults.standard.set(array.sorted(), forKey: Self.keyLikes)
+        
+    }
+    
+    static func isLiked(id: Int) -> Bool {
+        
+        return getLikedIDs().first(where: { $0 == id }) != nil
+        
+    }
+    
+    func toggleLike() -> Bool {
+        guard let id = self.event.value?.id else { return false }
+        return Self.toggleLike(for: id)
+    }
     
 }

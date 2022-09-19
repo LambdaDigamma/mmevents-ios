@@ -9,11 +9,10 @@
 #if os(iOS)
 
 import UIKit
-import MMUI
-import MMCommon
 import Fuse
 import OSLog
 import Combine
+import MMPages
 
 open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
@@ -48,6 +47,8 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
             }
         }
     }
+    
+    public var onShowEvent: ((Event.ID?, Page.ID?) -> Void)?
     
     // MARK: - UIViewController Lifecycle
     
@@ -247,7 +248,9 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
     
     public func buildOverview() -> DisplayMode {
         
-        let favourites: [EventViewModel<Event>] = events.filter { $0.isLiked }
+        let favourites: [EventViewModel<Event>] = events.filter {
+            $0.isLiked && ($0.model.startDate ?? Date(timeIntervalSinceNow: 60)) > Date()
+        }
         let active: [EventViewModel<Event>] = filterActive(events: events)
         let upcoming: [EventViewModel<Event>] = filterUpcoming(events: events)
         
@@ -378,6 +381,8 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
 //
 //        self.navigationController?.pushViewController(detailViewController, animated: true)
         
+        self.onShowEvent?(event.model.id, event.model.pageID)
+        
     }
     
     open func showFavourites() {
@@ -394,7 +399,8 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
     }
     
-    open func showNext() {
+    @discardableResult
+    open func showNext() -> EventsViewController {
         
         let viewController = EventsViewController()
         viewController.title = String.localized("EventsTitle")
@@ -403,6 +409,8 @@ open class EventsViewController: UIViewController, UISearchResultsUpdating {
         
         viewController.events = self.events
         viewController.currentDisplayMode = self.buildList()
+        
+        return viewController
         
     }
     

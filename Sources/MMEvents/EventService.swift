@@ -9,6 +9,8 @@ import Foundation
 import ModernNetworking
 import Combine
 import Cache
+import Core
+import OSLog
 
 public protocol EventServiceProtocol {
     
@@ -22,12 +24,24 @@ public protocol EventServiceProtocol {
     
     func invalidateCache()
     
+    func show(eventID: Event.ID) -> AnyPublisher<Event, Error>
+    
 }
+
+public extension Notification.Name {
+    
+    static let updatedEvents = Notification.Name("updateEvents")
+    
+}
+
 
 public class EventService: EventServiceProtocol {
     
     private let loader: HTTPLoader
     private let cache: Storage<String, [Event]>
+    private let logger: Logger = .init(.coreApi)
+    
+    private var lastUpdate: LastUpdate = .init(key: "all_events")
     
     public init(_ loader: HTTPLoader = URLSessionLoader(), _ cache: Storage<String, [Event]>) {
         self.loader = loader
@@ -35,7 +49,15 @@ public class EventService: EventServiceProtocol {
     }
     
     public func loadEvents() -> AnyPublisher<[Event], Error> {
-        return loadEventsFromNetwork()
+
+        if lastUpdate.shouldReload(ttl: .minutes(5)) {
+            logger.info("Should reload all events")
+            return loadEventsFromNetwork()
+        } else {
+            logger.info("Do not reload all events")
+            return loadEventsFromPersistence()
+        }
+        
     }
     
     public func loadEventsFromNetwork() -> AnyPublisher<[Event], Error> {
@@ -43,8 +65,11 @@ public class EventService: EventServiceProtocol {
         var request = HTTPRequest(path: Endpoint.index.path())
         
         request.queryItems = [
-            URLQueryItem(name: "page[size]", value: String(50)),
+            URLQueryItem(name: "page[size]", value: String(180)),
         ]
+        
+        print("headers: ")
+        print(request.headers)
         
         return Deferred {
             Future { promise in
@@ -60,7 +85,8 @@ public class EventService: EventServiceProtocol {
             $0.data.chronologically()
         })
         .map({
-            self.cache.async.setObject($0, forKey: "events") { (result) in }
+            self.cache.async.setObject($0, forKey: CachingKeys.events.rawValue) { (result) in }
+            self.lastUpdate.setNow()
             return $0
         })
         .eraseToAnyPublisher()
@@ -68,23 +94,50 @@ public class EventService: EventServiceProtocol {
     }
     
     public func loadEventsFromPersistence() -> AnyPublisher<[Event], Error> {
+        
         return Deferred {
             Future { promise in
-                self.cache.async.object(forKey: CachingKeys.events.rawValue) { (result: Result<[Event]>) in
+                self.cache.async.object(forKey: CachingKeys.events.rawValue) { (result: Result<[Event], Error>) in
                     switch result {
-                        case .value(let v):
-                            promise(.success(v))
+                        case .success(let success):
+                            promise(.success(success))
                             break
-                        case .error(let e):
-                            promise(.failure(e))
+                        case .failure(let failure):
+                            promise(.failure(failure))
                     }
                 }
             }
         }
         .eraseToAnyPublisher()
+        
+    }
+    
+    public func show(eventID: Event.ID) -> AnyPublisher<Event, Error> {
+        
+        let request = HTTPRequest(
+            method: .get,
+            path: "/api/v1/events/\(eventID)"
+        )
+        
+        return Deferred {
+            Future { promise in
+                self.loader.load(request) { (result) in
+                    promise(result)
+                }
+            }
+        }
+        .compactMap { $0.body }
+        .decode(type: Resource<Event>.self, decoder: Event.decoder)
+        .map({
+            return $0.data
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+        
     }
     
     public func invalidateCache() {
+        lastUpdate.reset()
         try? cache.removeAll()
     }
     
@@ -104,6 +157,46 @@ public class EventService: EventServiceProtocol {
         .decode(type: StreamConfig.self, decoder: StreamConfig.decoder)
         .eraseToAnyPublisher()
         
+    }
+    
+}
+
+public class StaticEventService: EventServiceProtocol {
+    
+    public init() {}
+    
+    public func loadEvents() -> AnyPublisher<[Event], Error> {
+        return Just([])
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
+    
+    public func loadEventsFromNetwork() -> AnyPublisher<[Event], Error> {
+        return Just([])
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
+    
+    public func loadEventsFromPersistence() -> AnyPublisher<[Event], Error> {
+        return Just([])
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
+    
+    public func loadStream() -> AnyPublisher<StreamConfig, Error> {
+        return Just(StreamConfig())
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
+    
+    public func invalidateCache() {
+        
+    }
+    
+    public func show(eventID: Event.ID) -> AnyPublisher<Event, Error> {
+        return Just(Event.stub(withID: 1).setting(\.name, to: "Amaro Freitas (BR) + Introduction by DJ Tudo (BR)"))
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
     }
     
 }
@@ -129,69 +222,6 @@ extension EventService {
     
     public enum CachingKeys: String {
         case events = "events"
-    }
-    
-}
-
-private let keyLikes = "likedEventIDs"
-
-public extension EventServiceProtocol {
-    
-    // MARK: - Like Handling
-    
-    static func getLikedIDs() -> [Event.ID] {
-        
-        let likeIDs = UserDefaults.standard.array(forKey: keyLikes) as? [Event.ID]
-        
-        return likeIDs ?? []
-        
-    }
-    
-    static func toggleLike(for id: Event.ID) -> Bool {
-        
-        var likedIDs = getLikedIDs()
-        var isLiked = false
-        
-        if let likedIndex = likedIDs.firstIndex(of: id) {
-            
-            likedIDs.remove(at: likedIndex)
-            isLiked = false
-            
-        } else {
-            
-            likedIDs.append(id)
-            isLiked = true
-            
-        }
-        
-        UserDefaults.standard.set(likedIDs.sorted(), forKey: keyLikes)
-        
-        return isLiked
-        
-    }
-    
-    static func setLikeStatus(likeStatus: Bool, for id: Event.ID) {
-        
-        var likedIDs = getLikedIDs()
-        
-        if likeStatus {
-            likedIDs.append(id)
-        } else {
-            likedIDs.removeAll(where: { $0 == id })
-        }
-        
-        let set = Set(likedIDs)
-        
-        let array = Array(set)
-        
-        UserDefaults.standard.set(array.sorted(), forKey: keyLikes)
-        
-    }
-    
-    static func isLiked(id: Event.ID) -> Bool {
-        
-        return getLikedIDs().first(where: { $0 == id }) != nil
-        
     }
     
 }

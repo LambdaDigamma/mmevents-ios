@@ -5,9 +5,9 @@
 //  Created by Lennart Fischer on 06.01.21.
 //
 
+import Core
 import Foundation
 import CoreLocation
-import MMCommon
 
 public struct EventExtras: Codable {
     
@@ -32,23 +32,27 @@ public struct EventExtras: Codable {
     public var iconURL: String? = nil
     public var isMovingAct: Bool? = nil
     public var shape: [[Double]]? = nil
+    public var tickets: String? = nil
     
-    public init(location: String? = nil,
-                street: String? = nil,
-                houseNumber: String? = nil,
-                place: String? = nil,
-                postcode: String? = nil,
-                lat: Double? = nil,
-                lng: Double? = nil,
-                organizer: String? = nil,
-                needsFestivalTicket: Bool? = nil,
-                isFree: Bool? = nil,
-                visitWithExtraTicket: Bool? = nil,
-                color: String? = nil,
-                descriptionEN: String? = nil,
-                iconURL: String? = nil,
-                isMovingAct: Bool? = nil,
-                shape: [[Double]]? = nil) {
+    public init(
+        location: String? = nil,
+        street: String? = nil,
+        houseNumber: String? = nil,
+        place: String? = nil,
+        postcode: String? = nil,
+        lat: Double? = nil,
+        lng: Double? = nil,
+        organizer: String? = nil,
+        needsFestivalTicket: Bool? = nil,
+        isFree: Bool? = nil,
+        visitWithExtraTicket: Bool? = nil,
+        color: String? = nil,
+        descriptionEN: String? = nil,
+        iconURL: String? = nil,
+        isMovingAct: Bool? = nil,
+        shape: [[Double]]? = nil,
+        tickets: String? = nil
+    ) {
         
         self.needsFestivalTicket = needsFestivalTicket
         self.isFree = isFree
@@ -67,6 +71,7 @@ public struct EventExtras: Codable {
         self.iconURL = iconURL
         self.isMovingAct = isMovingAct
         self.shape = shape
+        self.tickets = tickets
         
     }
     

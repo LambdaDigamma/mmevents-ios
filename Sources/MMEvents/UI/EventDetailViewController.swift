@@ -6,9 +6,9 @@
 //
 
 #if canImport(UIKit)
+import Core
 import UIKit
 import MapKit
-import MMAPI
 
 #if !os(tvOS)
 import SafariServices
@@ -48,24 +48,23 @@ open class EventDetailViewController: UIViewController {
         
 //        self.title = String.localized("Details")
         
+        
+#if !os(tvOS)
         self.navigationItem.largeTitleDisplayMode = .never
+#endif
         
         self.eventDetailView.navigationAction = navigationAction
         self.eventDetailView.websiteAction = websiteAction
         self.eventDetailView.reminderAction = reminderAction
         
-        if let eventID = viewModel.model?.id {
-            
-            let isLiked = EventManager.shared.isLiked(id: eventID)
-            
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-                image: isLiked ? Images.heartFill : Images.heartOutline,
-                style: .plain,
-                target: self,
-                action: #selector(toggleHeart(barButtonItem:))
-            )
-            
-        }
+        let isLiked = viewModel.isLiked
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: isLiked ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart"),
+            style: .plain,
+            target: self,
+            action: #selector(toggleHeart(barButtonItem:))
+        )
         
     }
     
@@ -125,18 +124,14 @@ open class EventDetailViewController: UIViewController {
         // TODO: Improve this
         // https://www.swiftbysundell.com/posts/different-flavors-of-view-models-in-swift
         
-        let eventID = viewModel.model?.id
+        viewModel.isLiked.toggle()
         
-        if let eventID = eventID {
-            
-            let isLiked = EventManager.shared.toggleLike(for: eventID)
-            
-            if isLiked {
-                barButtonItem.image = Images.heartFill
-            } else {
-                barButtonItem.image = Images.heartOutline
-            }
-            
+        let isLiked = viewModel.isLiked
+        
+        if isLiked {
+            barButtonItem.image = UIImage(systemName: "heart.fill")
+        } else {
+            barButtonItem.image = UIImage(systemName: "heart")
         }
         
     }

@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 
 import UIKit
-import MMUI
 
 public class EventHeaderFooterView: UITableViewHeaderFooterView {
     
@@ -101,7 +100,9 @@ public class EventHeaderFooterView: UITableViewHeaderFooterView {
     }
     
     private func setupTheming() {
+#if !os(tvOS)
         self.backgroundColor = UIColor.systemBackground
+#endif
         self.sectionLabel.textColor = UIColor.secondaryLabel
         self.moreButton.setTitleColor(EventPackageConfiguration.accentColor, for: .normal)
     }

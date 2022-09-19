@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 
 import UIKit
-import MMUI
 
 public class EventTableViewCell: UITableViewCell {
     
@@ -125,7 +124,9 @@ public class EventTableViewCell: UITableViewCell {
     
     private func setupTheming() {
         
+#if !os(tvOS)
         self.backgroundColor = UIColor.systemBackground
+#endif
         self.indicatorView.backgroundColor = EventPackageConfiguration.accentColor
         self.titleLabel.textColor = UIColor.label
         self.subtitleLabel.textColor = UIColor.secondaryLabel

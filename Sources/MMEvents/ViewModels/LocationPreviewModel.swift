@@ -5,9 +5,9 @@
 //  Created by Lennart Fischer on 14.06.21.
 //
 
+import Core
 import Foundation
 import CoreLocation
-import MMAPI
 import Combine
 
 public struct LocationPreviewModel {

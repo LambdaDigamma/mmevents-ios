@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 
 import UIKit
-import MMUI
 
 public class HintTableViewCell: UITableViewCell {
     
@@ -67,7 +66,9 @@ public class HintTableViewCell: UITableViewCell {
     
     private func setupTheming() {
         
+#if !os(tvOS)
         self.backgroundColor = UIColor.systemBackground
+#endif
         self.hintLabel.textColor = UIColor.secondaryLabel
         
     }

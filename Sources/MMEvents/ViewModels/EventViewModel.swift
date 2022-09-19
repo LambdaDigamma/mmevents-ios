@@ -5,8 +5,8 @@
 //  Created by Lennart Fischer on 06.01.21.
 //
 
+import Core
 import Foundation
-import MMCommon
 
 public class EventViewModel<Event: BaseEvent> {
     
@@ -200,7 +200,7 @@ public class EventViewModel<Event: BaseEvent> {
     }
 
     open var isLiked: Bool {
-        return EventService.isLiked(id: model.id as! MMEvents.Event.ID)
+        return EventDetailsViewModel.isLiked(id: model.id as! Int)
     }
     
     /// This provides information based on the the extra information.
