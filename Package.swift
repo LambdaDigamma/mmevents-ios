@@ -14,7 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Core", path: "./../Core"),
-        .package(name: "MMPages", url: "https://github.com/lambdadigamma/mmpages-ios", from: "0.0.2"),
+        .package(name: "MMPages", path: "./../mmpages-ios"),
         .package(name: "ModernNetworking", url: "https://github.com/lambdadigamma/modernnetworking", from: "0.1.1"),
     ],
     targets: [
