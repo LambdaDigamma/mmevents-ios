@@ -14,7 +14,7 @@ import Cache
 
 final class EventServiceTests: XCTestCase {
     
-    var eventService: EventService! = nil
+    var eventService: LegacyEventService! = nil
     
     var cancellables = Set<AnyCancellable>()
     
@@ -38,7 +38,7 @@ final class EventServiceTests: XCTestCase {
                                  memoryConfig: MemoryConfig(),
                                  transformer: TransformerFactory.forCodable(ofType: [Event].self))
         
-        eventService = EventService(mockLoader, cache)
+        eventService = LegacyEventService(mockLoader, cache)
         
     }
     

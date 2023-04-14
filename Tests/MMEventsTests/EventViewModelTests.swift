@@ -20,6 +20,8 @@ final class EventViewModelTests: XCTestCase {
         
         ApplicationServerConfiguration.isMoersFestivalModeEnabled = true
         
+        
+        
     }
     
     override func tearDown() {

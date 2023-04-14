@@ -11,6 +11,7 @@ import UIKit
 import MapKit
 import AVFoundation
 import Nuke
+import NukeUI
 import Combine
 
 // TODO: Add Support for Moving Acts
@@ -201,7 +202,7 @@ open class EventDetailView: UIView, MKMapViewDelegate {
         viewModel.hideTicketText.assign(to: \.isHidden, on: ticketInfoTextView).store(in: &cancellables)
         
         viewModel.imageURL.sink { (url: URL?) in
-            Nuke.loadImage(with: url, into: self.imageView)
+//            NukeUI.loadImage(with: url, into: self.imageView)
         }.store(in: &cancellables)
         
         /// Accessibility

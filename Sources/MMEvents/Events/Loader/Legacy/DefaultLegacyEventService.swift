@@ -1,8 +1,8 @@
 //
-//  EventService.swift
+//  DefaultEventService.swift
 //  
 //
-//  Created by Lennart Fischer on 06.01.21.
+//  Created by Lennart Fischer on 12.04.23.
 //
 
 import Foundation
@@ -12,30 +12,7 @@ import Cache
 import Core
 import OSLog
 
-public protocol EventServiceProtocol {
-    
-    func loadEvents() -> AnyPublisher<[Event], Error>
-    
-    func loadEventsFromNetwork() -> AnyPublisher<[Event], Error>
-    
-    func loadEventsFromPersistence() -> AnyPublisher<[Event], Error>
-    
-    func loadStream() -> AnyPublisher<StreamConfig, Error>
-    
-    func invalidateCache()
-    
-    func show(eventID: Event.ID) -> AnyPublisher<Event, Error>
-    
-}
-
-public extension Notification.Name {
-    
-    static let updatedEvents = Notification.Name("updateEvents")
-    
-}
-
-
-public class EventService: EventServiceProtocol {
+public class DefaultLegacyEventService: LegacyEventService {
     
     private let loader: HTTPLoader
     private let cache: Storage<String, [Event]>
@@ -49,7 +26,7 @@ public class EventService: EventServiceProtocol {
     }
     
     public func loadEvents() -> AnyPublisher<[Event], Error> {
-
+        
         if lastUpdate.shouldReload(ttl: .minutes(5)) {
             logger.info("Should reload all events")
             return loadEventsFromNetwork()
@@ -161,47 +138,7 @@ public class EventService: EventServiceProtocol {
     
 }
 
-public class StaticEventService: EventServiceProtocol {
-    
-    public init() {}
-    
-    public func loadEvents() -> AnyPublisher<[Event], Error> {
-        return Just([])
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
-    
-    public func loadEventsFromNetwork() -> AnyPublisher<[Event], Error> {
-        return Just([])
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
-    
-    public func loadEventsFromPersistence() -> AnyPublisher<[Event], Error> {
-        return Just([])
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
-    
-    public func loadStream() -> AnyPublisher<StreamConfig, Error> {
-        return Just(StreamConfig())
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
-    
-    public func invalidateCache() {
-        
-    }
-    
-    public func show(eventID: Event.ID) -> AnyPublisher<Event, Error> {
-        return Just(Event.stub(withID: 1).setting(\.name, to: "Amaro Freitas (BR) + Introduction by DJ Tudo (BR)"))
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
-    
-}
-
-extension EventService {
+extension DefaultLegacyEventService {
     
     public enum Endpoint {
         case index

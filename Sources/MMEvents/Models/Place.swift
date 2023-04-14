@@ -129,7 +129,7 @@ public struct Place: Model, Stubbable {
         case id, lat, lng, name, tags, url, phone, events
         case streetName = "street_name"
         case streetNumber = "street_number"
-        case streetAddition = "street_addition"
+        case streetAddition = "address_addition"
         case postalCode = "postalcode"
         case postalTown = "postal_town"
         case countryCode = "country_code"

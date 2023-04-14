@@ -1,5 +1,5 @@
 //
-//  PageView.swift
+//  LegacyPageView.swift
 //  
 //
 //  Created by Lennart Fischer on 06.02.20.
@@ -12,7 +12,7 @@ import OSLog
 
 public let eventDetailMargin: CGFloat = 16 // UIDevice.current.userInterfaceIdiom == .phone ? 16 : 0
 
-public class PageView: UIStackView {
+public class LegacyPageView: UIStackView {
     
     public var viewModel: PageViewModel? {
         didSet {
