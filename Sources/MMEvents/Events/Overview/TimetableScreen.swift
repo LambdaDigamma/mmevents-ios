@@ -26,55 +26,35 @@ public struct TimetableScreen: View {
                 case .compact:
                     CompactEventsView(viewModel: viewModel)
                 case .images:
-                    images()
+                    ExtendedEventsView(viewModel: viewModel)
                 case .venueGrid:
                     VenueEventsGrid()
             }
             
         }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Section {
-                    Menu {
-                        Picker(selection: $displayMode, label: Text("Sorting options")) {
-                            ForEach(DailyEventsDisplayMode.allCases) { (displayMode: DailyEventsDisplayMode) in
-                                Text(displayMode.title)
-                                    .tag(displayMode)
-                                    .id(displayMode.rawValue)
-                            }
-                        }
-                    }
-                    label: {
-                        Label("Add", systemImage: "rectangle.grid.1x2")
-                    }
-                }
-            }
+        .onAppear {
+            viewModel.load()
         }
+//        .toolbar {
+//            ToolbarItem(placement: .primaryAction) {
+//                Section {
+//                    Menu {
+//                        Picker(selection: $displayMode, label: Text("Sorting options")) {
+//                            ForEach(DailyEventsDisplayMode.allCases) { (displayMode: DailyEventsDisplayMode) in
+//                                Text(displayMode.title)
+//                                    .tag(displayMode)
+//                                    .id(displayMode.rawValue)
+//                            }
+//                        }
+//                    }
+//                    label: {
+//                        Label("Add", systemImage: "rectangle.grid.1x2")
+//                    }
+//                }
+//            }
+//        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .navigationTitle(Text("Spielplan"))
-        
-    }
-    
-    @ViewBuilder private func images() -> some View {
-        
-        LazyVStack(spacing: 20) {
-            
-            EventCard(data: .init(
-                title: "Editrix (DE)",
-                place: "ENNI Eventhalle",
-                startDate: Date(),
-                endDate: Date(timeIntervalSinceNow: 60 * 30))
-            )
-            
-            EventCard(data: .init(
-                title: "Editrix (DE)",
-                place: "ENNI Eventhalle",
-                startDate: Date(),
-                endDate: Date(timeIntervalSinceNow: 60 * 30))
-            )
-            
-        }
-        .padding(.horizontal)
+        .navigationTitle(EventPackageStrings.timetable)
         
     }
     

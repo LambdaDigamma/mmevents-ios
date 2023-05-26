@@ -17,11 +17,14 @@ public struct CompactEventsView: View {
     
     public var body: some View {
         
-        VStack {
+        VStack(spacing: 0) {
             
             VStack(spacing: 0) {
                 
-                DaySelector(selectedDate: $viewModel.selectedDate, dates: viewModel.dates)
+                DaySelector(
+                    selectedDate: $viewModel.selectedDate,
+                    dates: viewModel.dates
+                )
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                 
@@ -33,7 +36,7 @@ public struct CompactEventsView: View {
                 
                 ForEach(viewModel.dates, id: \.self) { date in
                     
-                    DayEventsView(date: date)
+                    CompactDayEventsView(date: date)
                         .tag(date)
                     
                 }

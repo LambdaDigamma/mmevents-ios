@@ -32,6 +32,8 @@ public enum EventUtilities {
     
     public static let defaultTimeInterval: TimeInterval = 30 * 60
     
+    public static let defaultDayOffset: TimeInterval = 60 * 60 * 4
+    
     public static func isActive(startDate: Date?, endDate: Date?) -> Bool {
         
         if let startDate = startDate, let endDate = endDate {
@@ -48,7 +50,14 @@ public enum EventUtilities {
     public static func dateRange(startDate: Date?, endDate: Date?) -> ClosedRange<Date>? {
         
         if let startDate = startDate {
-            return startDate...(endDate ?? startDate.addingTimeInterval(Self.defaultTimeInterval))
+            
+            let endDate = endDate ?? startDate.addingTimeInterval(Self.defaultTimeInterval)
+            
+            if endDate <= startDate {
+                return startDate...startDate.addingTimeInterval(Self.defaultTimeInterval)
+            }
+            
+            return startDate...endDate
         }
         
         return nil

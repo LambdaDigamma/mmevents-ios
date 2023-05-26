@@ -10,6 +10,8 @@ import ModernNetworking
 
 public protocol EventService {
     
-    func index(cacheMode: CacheMode) async throws -> ResourceCollection<Event>
+    func index(cacheMode: CacheMode, withPages: Bool) async throws -> ResourceCollection<Event>
+    
+    func show(event eventID: Event.ID, cacheMode: CacheMode) async throws -> Resource<Event>
     
 }

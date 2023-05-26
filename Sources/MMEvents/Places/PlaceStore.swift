@@ -62,6 +62,7 @@ public final class PlaceStore {
         
     }
     
+    @discardableResult
     public func insert(_ place: PlaceRecord) async throws -> PlaceRecord {
         
         try await writer.write { db in

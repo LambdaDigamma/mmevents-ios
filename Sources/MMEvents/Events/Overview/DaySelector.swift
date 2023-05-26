@@ -18,7 +18,11 @@ struct DaySelector: View {
         HStack(spacing: 20) {
             
             ForEach(dates, id: \.self) { date in
-                Button(action: { selectedDate = date }) {
+                Button(action: {
+                    withAnimation {
+                        selectedDate = date
+                    }
+                }) {
                     DayItem(date: date, isActive: isSameDay(lhs: date, rhs: selectedDate))
                 }
             }

@@ -8,6 +8,9 @@
 
 import Core
 import SwiftUI
+import MediaLibraryKit
+import Factory
+import Combine
 
 public class EventListItemViewModel: StandardViewModel, Identifiable {
     
@@ -20,19 +23,35 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
     @Published public var endDate: Date?
     @Published public var location: String?
     @Published public var color: Color = .yellow
+    @Published public var media: Media?
+    
+    @Published public var isOpenEnd: Bool = false
+    
+    @Published public var isLiked: Bool = false
+    
+    private let favoriteEventsStore: FavoriteEventsStore?
     
     public init(
         eventID: Event.ID? = nil,
         title: String,
         startDate: Date? = nil,
         endDate: Date? = nil,
-        location: String? = nil
+        location: String? = nil,
+        media: Media? = nil,
+        isOpenEnd: Bool = false,
+        isLiked: Bool = false
     ) {
         self.eventID = eventID
         self.title = title
         self.startDate = startDate
         self.endDate = endDate
         self.location = location
+        self.media = media
+        self.isLiked = isLiked
+        self.isOpenEnd = isOpenEnd
+        self.favoriteEventsStore = Container.shared.favoriteEventsStore()
+        super.init()
+        self.setupListeners()
     }
     
     public var isActive: Bool {
@@ -43,10 +62,18 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
     }
     
     public var dateRange: ClosedRange<Date>? {
-        return EventUtilities.dateRange(
-            startDate: startDate,
-            endDate: endDate
-        )
+        
+        if !isOpenEnd {
+            
+            return EventUtilities.dateRange(
+                startDate: startDate,
+                endDate: endDate
+            )
+            
+        } else {
+            return nil
+        }
+        
     }
     
     public var timeDisplayMode: TimeDisplayMode {
@@ -54,6 +81,23 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
             startDate: startDate,
             endDate: endDate
         )
+    }
+    
+    public func setupListeners() {
+        
+        guard let favoriteEventsStore else { return }
+        guard let eventID else { return }
+
+        favoriteEventsStore.isLiked(eventID: eventID)
+            .sink { (completion: Subscribers.Completion<Error>) in
+
+            } receiveValue: { (isLiked: Bool) in
+
+                self.isLiked = isLiked
+
+            }
+            .store(in: &cancellables)
+        
     }
     
 }
@@ -69,31 +113,42 @@ public struct EventListItem: View {
     
     public var body: some View {
         
-        VStack(alignment: .leading, spacing: 6) {
+        HStack(alignment: .center) {
             
-            HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 6) {
                 
-                Text(viewModel.title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .foregroundColor(.primary)
+                HStack(alignment: .top) {
+                    
+                    Text(viewModel.title)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                }
                 
-                Spacer()
+                subtitle()
                 
             }
+            .padding(.leading, 16)
+            .background(
+                ZStack {
+                    Rectangle()
+                        .fill(viewModel.color)
+                        .frame(width: 2)
+                        .cornerRadius(4)
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            )
             
-            subtitle()
+            if viewModel.isLiked {
+                Image(systemName: "heart.fill")
+                    .imageScale(.small)
+                    .foregroundColor(.red)
+            }
             
         }
-        .padding(.leading, 16)
-        .background(ZStack {
-            Rectangle()
-                .fill(viewModel.color)
-                .frame(width: 2)
-                .cornerRadius(4)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading))
         .frame(maxWidth: .infinity, alignment: .leading)
         
     }
@@ -141,6 +196,17 @@ public struct EventListItem: View {
                         }
                         .lineLimit(1)
                         
+                    } else if let startDate = viewModel.startDate {
+                        
+                        Group {
+                            
+                            Text(startDate, style: .time) +
+                            
+                            (viewModel.location != nil ? Text(" • \(viewModel.location ?? "")") : Text(""))
+                            
+                        }
+                        .lineLimit(1)
+                        
                     }
                     
                 case .none:
@@ -161,7 +227,8 @@ struct EventListItem_Previews: PreviewProvider {
         
         let noTime = EventListItemViewModel(
             title: "Ghost Dogs (DE)",
-            location: "Aula Gymnasium Filder Benden"
+            location: "Aula Gymnasium Filder Benden",
+            isLiked: true
         )
         
         let future = EventListItemViewModel(

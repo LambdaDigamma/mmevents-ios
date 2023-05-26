@@ -30,8 +30,8 @@ extension Container {
 
 public class PlaceRepository {
     
-    private let store: PlaceStore
-    private let service: PlaceService
+    public let store: PlaceStore
+    public let service: PlaceService
     
     public var cancellables = Set<AnyCancellable>()
     

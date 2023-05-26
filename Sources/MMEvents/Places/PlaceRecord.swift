@@ -33,17 +33,13 @@ public struct PlaceRecord: Equatable {
 
 extension PlaceRecord: Codable, FetchableRecord, MutablePersistableRecord {
     
-    public static var databaseTableName: String = "places"
+    public static var databaseTableName: String = PlaceTableDefinition.tableName
     
     public static var databaseColumnDecodingStrategy: DatabaseColumnDecodingStrategy = .convertFromSnakeCase
     public static var databaseColumnEncodingStrategy: DatabaseColumnEncodingStrategy = .convertToSnakeCase
     
     internal enum Columns {
         static let name = Column(CodingKeys.name)
-    }
-    
-    mutating public func didInsert(_ inserted: InsertionSuccess) {
-        id = inserted.rowID
     }
     
     public static let events = hasMany(EventRecord.self)

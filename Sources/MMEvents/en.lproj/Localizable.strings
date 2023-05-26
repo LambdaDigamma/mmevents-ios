@@ -15,7 +15,7 @@
 "NeedsFestivalTicket" = "festival/day ticket required";
 "ExtraTicket" = "festival/day ticket or Mörzz-Ticket required (*)";
 "NotKnownPrompt" = "not yet announced";
-"LocationNotKnown" = "Site soon known";
+"LocationNotKnown" = "Venue to be announced";
 
 /* Events */
 "LiveNow" = "live now";
@@ -38,3 +38,25 @@
 "NotKnownLoc" = "Not known";
 
 "Details" = "Details";
+
+"NotYetScheduled" = "Not yet scheduled";
+"unknown" = "unknown";
+
+"LocationHeader" = "Venue";
+"TicketHeader" = "Ticket information";
+"ArtistsHeader" = "Artists";
+"StartHeader" = "Starts at";
+"EndHeader" = "Ends at";
+
+"Timetable" = "Timetable";
+
+"Download.header" = "Download data";
+"Download.footer" = "Downloading the entire timetable may result in higher data usage.";
+
+"Download.downloadContent" = "Download content";
+"Download.downloadMedia" = "Download media";
+"Download.downloadTimetable" = "Download timetable";
+"Download.eventOverview" = "Overview";
+
+"Download.content" = "Content";
+"Download.media" = "Images";

@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import Factory
 import GRDB
+import MMPages
 
 extension Container {
     
@@ -19,7 +20,8 @@ extension Container {
             
             return EventRepository(
                 store: EventStore(writer: dbQueue, reader: dbQueue),
-                service: StaticEventService(events: .success([]))
+                service: StaticEventService(events: .success([])),
+                pageStore: PageStore(writer: dbQueue, reader: dbQueue)
             )
 
         }.singleton
@@ -29,12 +31,16 @@ extension Container {
 
 public class EventRepository {
     
-    private let store: EventStore
-    private let service: EventService
+    public let store: EventStore
+    public let service: EventService
+    public let placeStore: PlaceStore?
+    public let pageStore: PageStore?
     
-    public init(store: EventStore, service: EventService) {
+    public init(store: EventStore, service: EventService, placeStore: PlaceStore? = nil, pageStore: PageStore?) {
         self.store = store
         self.service = service
+        self.placeStore = placeStore
+        self.pageStore = pageStore
     }
     
     // MARK: - Data Source
@@ -42,7 +48,28 @@ public class EventRepository {
     public func events(between startDate: Date, and endDate: Date) -> AnyPublisher<[Event], Error> {
         
         return store.observeEvents(between: startDate, and: endDate)
+            .map { $0.map { $0.event.toBase(with: $0.place?.toBase()) } }
+            .eraseToAnyPublisher()
+        
+    }
+    
+    public func events() -> AnyPublisher<[Event], Error> {
+        
+        return store.observeAllEvents()
             .map { $0.map { $0.toBase() } }
+            .eraseToAnyPublisher()
+        
+    }
+    
+    public func eventDetail(id: Event.ID) -> AnyPublisher<Event?, Error> {
+        
+        return store.observeEvent(id: id)
+            .map({ (record: EventWithPlace?) in
+                let eventRecord: EventRecord? = record?.event
+                let placeRecord: PlaceRecord? = record?.place
+                
+                return eventRecord?.toBase(with: placeRecord?.toBase())
+            })
             .eraseToAnyPublisher()
         
     }
@@ -52,9 +79,9 @@ public class EventRepository {
     /// Refreshes the events while skipping all client cache layers
     /// and writes all new data to disk so that the database observation
     /// as the single source of truth can reload the user interface.
-    public func refreshEvents() async throws {
+    public func refreshEvents(withPages: Bool = false) async throws {
         
-        let resource = try await service.index(cacheMode: .revalidate)
+        let resource = try await service.index(cacheMode: .revalidate, withPages: withPages)
         
         try await updateStore(events: resource.data)
         
@@ -68,9 +95,25 @@ public class EventRepository {
     /// data from the network.
     public func reloadEvents() async throws {
         
-        let resource = try await service.index(cacheMode: .cached)
+        let resource = try await service.index(cacheMode: .cached, withPages: false)
         
         try await updateStore(events: resource.data)
+        
+    }
+    
+    public func refreshEvent(for eventID: Event.ID) async throws {
+        
+        let resource = try await service.show(event: eventID, cacheMode: .revalidate)
+        
+        try await updateStore(event: resource.data)
+        
+    }
+    
+    public func reloadEvent(for eventID: Event.ID) async throws {
+        
+        let resource = try await service.show(event: eventID, cacheMode: .cached)
+        
+        try await updateStore(event: resource.data)
         
     }
     
@@ -81,7 +124,50 @@ public class EventRepository {
     /// - Throws: any errors from the underlying database implementation.
     private func updateStore(events: [Event]) async throws {
         
-        try await store.updateOrCreate(events.map { $0.toRecord() })
+        try await store.deleteAllAndInsert(events.map { $0.toRecord() })
+        
+        if let placeStore {
+            
+            for event in events {
+                
+                if let place = event.place?.toRecord() {
+                    try await placeStore.insert(place)
+                }
+                
+            }
+            
+        }
+        
+        if let pageStore {
+            
+            let pages = events.compactMap { $0.page }
+            let blocks = pages.map { $0.blocks.map { $0.toRecord() } }.reduce([], +)
+            
+            try await pageStore.updateOrCreate(pages.compactMap { $0.toRecord() })
+            try await pageStore.updateOrCreate(blocks)
+            
+        }
+        
+    }
+    
+    private func updateStore(event: Event) async throws {
+        
+        try await store.updateOrCreate([event.toRecord()])
+        
+        if let placeStore {
+            
+            if let place = event.place?.toRecord() {
+                try await placeStore.insert(place)
+            }
+            
+        }
+        
+        if let pageStore, let page = event.page {
+            
+            try await pageStore.updateOrCreate([page.toRecord()])
+            try await pageStore.updateOrCreate(page.blocks.map { $0.toRecord() })
+            
+        }
         
     }
     

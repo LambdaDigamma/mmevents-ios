@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 @testable import MMEvents
+@testable import Core
 
 final class DayEventsViewModelTests: XCTestCase {
     
@@ -15,7 +16,7 @@ final class DayEventsViewModelTests: XCTestCase {
         
         let date = Date(timeIntervalSince1970: 1681251959)
         
-        let (start, end) = DayEventsViewModel.calculateDateRange(
+        let (start, end) = DateUtils.calculateDateRange(
             for: date,
             offset: 4 * 60 * 60,
             calendar: .init(identifier: .gregorian)

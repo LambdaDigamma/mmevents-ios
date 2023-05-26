@@ -7,32 +7,38 @@
 //
 
 import SwiftUI
+import Core
 
 fileprivate func groupEvents(
     _ events: [EventListItemViewModel]
 ) -> [(String, [EventListItemViewModel])] {
     
-    var keyedEvents: [String: [EventListItemViewModel]] = [:]
+    let uniqueDates = DateUtils.sortedUniqueDates(events.compactMap { $0.startDate })
     
-    for viewModel in events {
+    var sections = uniqueDates.map { (date: Date) in
         
-        let key = viewModel.startDate?
-            .format(format: "EEEE, dd.MM.yyyy") ?? "Datum unveröffentlicht"
+        let range = DateUtils.calculateDateRange(for: date, offset: EventUtilities.defaultDayOffset)
         
-        var kEvent = keyedEvents[key] ?? []
+        let filteredEvents = events
+            .filter { event in
+                if let startDate = event.startDate {
+                    return (range.startDate...range.endDate).contains(startDate)
+                } else {
+                    return false
+                }
+            }
         
-        kEvent.append(viewModel)
-        
-        keyedEvents[key] = kEvent
+        return (date.formatted(date: .complete, time: .omitted), filteredEvents)
         
     }
     
-    let sorted = keyedEvents.sorted { (a, b) -> Bool in
-        return Date.from(a.key, withFormat: "EEEE, dd.MM.yyyy") ??
-        Date(timeIntervalSinceNow: pow(86400, 4)) < Date.from(b.key, withFormat: "EEEE, dd.MM.yyyy") ?? Date(timeIntervalSinceNow: pow(86400, 4))
+    let eventsWithoutDate = events.filter { $0.startDate == nil }
+    
+    if !eventsWithoutDate.isEmpty {
+        sections.append((EventPackageStrings.notYetScheduled, eventsWithoutDate))
     }
     
-    return sorted
+    return sections
     
 }
 

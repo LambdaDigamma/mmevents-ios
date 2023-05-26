@@ -16,9 +16,9 @@ public class DefaultEventService: EventService {
         self.loader = loader
     }
     
-    public func index(cacheMode: CacheMode) async throws -> ResourceCollection<Event> {
+    public func index(cacheMode: CacheMode, withPages: Bool = false) async throws -> ResourceCollection<Event> {
         
-        var request = HTTPRequest(path: Endpoint.index.path())
+        var request = HTTPRequest(path: withPages ? Endpoint.downloadContent.path() : Endpoint.index.path())
         
         request.cachePolicy = cacheMode.policy
         
@@ -30,20 +30,37 @@ public class DefaultEventService: EventService {
         
     }
     
+    public func show(event eventID: Event.ID, cacheMode: CacheMode) async throws -> Resource<Event> {
+        
+        var request = HTTPRequest(path: Endpoint.show(event: eventID).path())
+        
+        request.cachePolicy = cacheMode.policy
+        
+        let result = await loader.load(request)
+        
+        let events = try await result.decoding(Resource<Event>.self, using: Event.decoder)
+        
+        return events
+        
+    }
+    
 }
 
 extension DefaultEventService {
     
     public enum Endpoint {
         case index
-        case show(event: Event)
+        case show(event: Event.ID)
+        case downloadContent
         
         func path() -> String {
             switch self {
                 case .index:
                     return "events"
-                case .show(let event):
-                    return "events/\(event.id)"
+                case .show(let eventID):
+                    return "events/\(eventID)"
+                case .downloadContent:
+                    return "festival/content"
             }
         }
     }

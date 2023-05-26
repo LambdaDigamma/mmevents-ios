@@ -7,6 +7,7 @@
 
 import Foundation
 import MMPages
+import MediaLibraryKit
 
 public struct Event: BaseEvent {
     
@@ -28,6 +29,9 @@ public struct Event: BaseEvent {
     public var artists: [String?]? = nil
     public var createdAt: Date? = Date()
     public var updatedAt: Date? = Date()
+    public var publishedAt: Date?
+    
+    public var mediaCollections: MediaCollectionsContainer
     
     public init(
         id: ID,
@@ -45,7 +49,9 @@ public struct Event: BaseEvent {
         pageID: Page.ID? = nil,
         placeID: Place.ID? = nil,
         createdAt: Date? = Date(),
-        updatedAt: Date? = Date()
+        updatedAt: Date? = Date(),
+        publishedAt: Date? = nil,
+        mediaCollections: MediaCollectionsContainer = MediaCollectionsContainer()
     ) {
         self.id = id
         self.name = name
@@ -63,6 +69,8 @@ public struct Event: BaseEvent {
         self.placeID = placeID
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.publishedAt = publishedAt
+        self.mediaCollections = mediaCollections
     }
     
     // Relations
@@ -88,6 +96,18 @@ public struct Event: BaseEvent {
         case place = "place"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case publishedAt = "published_at"
+        case mediaCollections = "media_collections"
+    }
+    
+    public var isOpenEnd: Bool {
+        
+        if let openEnd = extras?.openEnd {
+            return openEnd
+        }
+        
+        return false
+        
     }
     
 }
@@ -108,17 +128,20 @@ extension Event {
     
     public static func stub(withID id: Event.ID) -> Event {
         
-        return Event(id: id,
-                     name: "Test Event",
-                     description: nil,
-                     url: nil,
-                     startDate: nil,
-                     endDate: nil,
-                     category: nil,
-                     imagePath: nil,
-                     extras: nil,
-                     createdAt: Date(),
-                     updatedAt: Date())
+        return Event(
+            id: id,
+            name: "Test Event",
+            description: nil,
+            url: nil,
+            startDate: nil,
+            endDate: nil,
+            category: nil,
+            imagePath: nil,
+            extras: nil,
+            createdAt: Date(),
+            updatedAt: Date(),
+            publishedAt: Date()
+        )
         
     }
     

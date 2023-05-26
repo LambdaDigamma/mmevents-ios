@@ -38,7 +38,7 @@ final class EventServiceTests: XCTestCase {
                                  memoryConfig: MemoryConfig(),
                                  transformer: TransformerFactory.forCodable(ofType: [Event].self))
         
-        eventService = LegacyEventService(mockLoader, cache)
+        eventService = DefaultLegacyEventService(mockLoader, cache)
         
     }
     

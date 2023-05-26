@@ -8,6 +8,8 @@
 
 import Foundation
 import GRDB
+import MMPages
+import MediaLibraryKit
 
 public struct EventRecord: Equatable, Codable {
     
@@ -31,6 +33,11 @@ public struct EventRecord: Equatable, Codable {
     public var archivedAt: Date? = nil
     public var deletedAt: Date? = nil
     
+    public var artists: [String]? = nil
+    public var mediaCollections: MediaCollectionsContainer = MediaCollectionsContainer()
+    
+    public var extras: EventExtras?
+    
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -48,11 +55,14 @@ public struct EventRecord: Equatable, Codable {
         case updatedAt = "updated_at"
         case archivedAt = "archived_at"
         case deletedAt = "deleted_at"
+        case artists = "artists"
+        case mediaCollections = "media_collections"
+        case extras = "extras"
     }
     
-    public func toBase() -> Event {
+    public func toBase(with place: Place? = nil) -> Event {
         
-        return Event(
+        var event = Event(
             id: id.toInt() ?? 0,
             name: name,
             description: description,
@@ -63,33 +73,45 @@ public struct EventRecord: Equatable, Codable {
             imagePath: nil,
             web: url != nil ? URL(string: url ?? "") : nil,
             image: nil,
-            extras: nil,
-            artists: nil,
+            extras: self.extras,
+            artists: artists,
             pageID: pageID.toInt(),
             placeID: placeID.toInt(),
             createdAt: createdAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            publishedAt: publishedAt,
+            mediaCollections: mediaCollections
         )
+        
+        event.place = place
+        
+        return event
+        
     }
     
 }
 
 extension EventRecord: FetchableRecord, MutablePersistableRecord {
     
-    public static var databaseTableName: String = "events"
+    public static var databaseTableName: String = EventTableDefinition.tableName
     
     public enum Columns {
         static let name = Column(CodingKeys.name)
         static let description = Column(CodingKeys.description)
         static let startDate = Column(CodingKeys.startDate)
         static let endDate = Column(CodingKeys.startDate)
+        static let placeID = Column(CodingKeys.placeID)
+        static let archivedAt = Column(CodingKeys.archivedAt)
     }
     
     mutating public func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
     }
     
-    static let place = belongsTo(PlaceRecord.self)
+    static let placeForeignKey = ForeignKey(["place_id"])
+    
+    static let place = belongsTo(PlaceRecord.self, using: placeForeignKey)
+    static let page = belongsTo(PageRecord.self)
     
     var place: QueryInterfaceRequest<PlaceRecord> {
         request(for: EventRecord.place)
@@ -111,13 +133,16 @@ extension Event {
             category: self.category,
             pageID: self.pageID.toInt64(),
             placeID: self.placeID.toInt64(),
-            publishedAt: nil,
+            publishedAt: self.publishedAt,
             cancelledAt: nil,
             scheduledAt: nil,
             createdAt: self.createdAt,
             updatedAt: self.updatedAt,
             archivedAt: nil,
-            deletedAt: nil
+            deletedAt: nil,
+            artists: self.artists?.compactMap { $0 },
+            mediaCollections: self.mediaCollections,
+            extras: self.extras
         )
         
     }

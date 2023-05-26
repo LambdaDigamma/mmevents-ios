@@ -38,3 +38,25 @@
 "NotKnownLoc" = "nicht bekannt";
 
 "Details" = "Details";
+
+"NotYetScheduled" = "Noch nicht terminiert";
+"unknown" = "unbekannt";
+
+"LocationHeader" = "Ort";
+"TicketHeader" = "Ticket Informationen";
+"ArtistsHeader" = "Künstler:innen";
+"StartHeader" = "Startet";
+"EndHeader" = "Endet";
+
+"Timetable" = "Spielplan";
+
+"Download.header" = "Daten herunterladen";
+"Download.footer" = "Beim Herunterladen des ganzen Spielplans kann ein höherer Datenverbrauch auftreten.";
+
+"Download.downloadContent" = "Inhalt herunterladen";
+"Download.downloadMedia" = "Bilder herunterladen";
+"Download.downloadTimetable" = "Spielplan herunterladen";
+"Download.eventOverview" = "Übersicht";
+
+"Download.content" = "Inhalt";
+"Download.media" = "Bilder";

@@ -8,7 +8,7 @@
 import Foundation
 import GRDB
 
-public enum EventTableDefinition {
+public struct EventTableDefinition: ApplyTableDefinition {
     
     public static let tableName = "events"
     
@@ -39,6 +39,15 @@ public enum EventTableDefinition {
         t.column("archived_at", .datetime)
         t.column("deleted_at", .datetime)
         
+        t.column("artists", .text)
+        t.column("media_collections", .text)
+        
+    }
+    
+    public var tableName: String = Self.tableName
+    
+    public func apply(to t: TableDefinition) {
+        Self.apply(to: t)
     }
     
 }

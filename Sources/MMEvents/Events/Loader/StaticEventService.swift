@@ -16,7 +16,7 @@ public class StaticEventService: EventService {
         self.events = events
     }
     
-    public func index(cacheMode: CacheMode) async throws -> ResourceCollection<Event> {
+    public func index(cacheMode: CacheMode, withPages: Bool) async throws -> ResourceCollection<Event> {
         
         switch events {
             case .success(let success):
@@ -24,6 +24,12 @@ public class StaticEventService: EventService {
             case .failure(let failure):
                 throw failure
         }
+        
+    }
+    
+    public func show(event eventID: Event.ID, cacheMode: CacheMode) async throws -> Resource<Event> {
+        
+        return Resource(data: .stub(withID: 1))
         
     }
     

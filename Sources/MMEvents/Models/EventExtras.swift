@@ -9,7 +9,7 @@ import Core
 import Foundation
 import CoreLocation
 
-public struct EventExtras: Codable {
+public struct EventExtras: Codable, Equatable {
     
     // Common Attributes
     
@@ -22,6 +22,9 @@ public struct EventExtras: Codable {
     public var lng: Double? = nil
     public var organizer: String? = nil
     
+    public var openEnd: Bool? = nil
+    public var sametime: Int? = nil
+    
     // Moers Festival Attributes
     
     public var needsFestivalTicket: Bool? = nil
@@ -33,6 +36,28 @@ public struct EventExtras: Codable {
     public var isMovingAct: Bool? = nil
     public var shape: [[Double]]? = nil
     public var tickets: String? = nil
+    
+    enum CodingKeys: String, CodingKey {
+        case location
+        case street
+        case houseNumber
+        case place
+        case postcode
+        case lat
+        case lng
+        case organizer
+        case openEnd = "open_end"
+        case sametime
+        case needsFestivalTicket
+        case isFree
+        case visitWithExtraTicket
+        case color = "color"
+        case descriptionEN
+        case iconURL
+        case isMovingAct
+        case shape
+        case tickets
+    }
     
     public init(
         location: String? = nil,
