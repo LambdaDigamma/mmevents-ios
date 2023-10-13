@@ -11,7 +11,7 @@ import Combine
 import OSLog
 import Core
 
-public class DayEventsViewModel: ObservableObject {
+public class DayEventsViewModel: ObservableObject, Identifiable {
     
     internal let date: Date
     internal let startDate: Date
@@ -63,7 +63,7 @@ public class DayEventsViewModel: ObservableObject {
                 
             }
             .store(in: &cancellables)
-
+        
         
     }
     
@@ -93,6 +93,10 @@ public class DayEventsViewModel: ObservableObject {
             }
         }
         
+    }
+    
+    public var id: String {
+        return self.date.formatted(date: .numeric, time: .omitted)
     }
     
 }

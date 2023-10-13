@@ -12,11 +12,14 @@ import Core
 
 public class TimetableViewModel: ObservableObject {
     
+    @Published public var dates: [Date] = []
     @Published var selectedDate: Date = .init()
+    
+    @Published var daysViewModels: [DayEventsViewModel] = []
     
     private let repository: EventRepository
     
-    @Published public var dates: [Date] = []
+    
     public var cancellables = Set<AnyCancellable>()
     
     public init() {
@@ -38,8 +41,10 @@ public class TimetableViewModel: ObservableObject {
                 
                 self.dates = DateUtils.sortedUniqueDates(events.compactMap { $0.startDate })
                 
+                self.daysViewModels = self.dates.map { DayEventsViewModel(date: $0) }
+                
                 if self.dates.contains(where: { $0.isToday }) {
-                    self.selectedDate = Date()
+                    self.selectedDate = self.dates.filter { $0.isToday }.first ?? self.dates.first ?? Date()
                 } else {
                     self.selectedDate = self.dates.first ?? Date()
                 }

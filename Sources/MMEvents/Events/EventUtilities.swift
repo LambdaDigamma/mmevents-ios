@@ -36,6 +36,8 @@ public enum EventUtilities {
     
     public static func isActive(startDate: Date?, endDate: Date?) -> Bool {
         
+        // TODO: Check this
+        
         if let startDate = startDate, let endDate = endDate {
             return (startDate...endDate).contains(Date())
         } else if let startDate = startDate {

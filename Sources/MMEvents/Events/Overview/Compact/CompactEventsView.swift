@@ -34,12 +34,19 @@ public struct CompactEventsView: View {
             
             TabView(selection: $viewModel.selectedDate) {
                 
-                ForEach(viewModel.dates, id: \.self) { date in
+                ForEach(viewModel.daysViewModels) { dateViewModel in
                     
-                    CompactDayEventsView(date: date)
-                        .tag(date)
+                    CompactDayEventsView(viewModel: dateViewModel)
+                        .tag(dateViewModel.date)
                     
                 }
+                
+//                ForEach(viewModel.dates, id: \.self) { date in
+//
+//                    CompactDayEventsView(date: date)
+//                        .tag(date)
+//
+//                }
                 
             }.tabViewStyle(.page(indexDisplayMode: .never))
             

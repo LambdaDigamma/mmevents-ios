@@ -11,12 +11,12 @@ public struct CompactDayEventsView: View {
     
     private let date: Date
     
-    @StateObject var viewModel: DayEventsViewModel
+    @ObservedObject var viewModel: DayEventsViewModel
     @EnvironmentObject var transmitter: TimetableTransmitter
     
-    public init(date: Date) {
-        self.date = date
-        self._viewModel = StateObject(wrappedValue: DayEventsViewModel(date: date))
+    public init(viewModel: DayEventsViewModel) {
+        self.date = viewModel.date
+        self.viewModel = viewModel
     }
     
     public var body: some View {
