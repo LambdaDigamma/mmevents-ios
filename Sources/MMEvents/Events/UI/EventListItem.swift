@@ -12,7 +12,7 @@ import MediaLibraryKit
 import Factory
 import Combine
 
-public class EventListItemViewModel: StandardViewModel, Identifiable {
+public class EventListItemViewModel: StandardViewModel, Identifiable, Hashable {
     
     public let id: UUID = .init()
     
@@ -26,6 +26,7 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
     @Published public var media: Media?
     
     @Published public var isOpenEnd: Bool = false
+    @Published public var isPreview: Bool = false
     
     @Published public var isLiked: Bool = false
     
@@ -39,7 +40,8 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
         location: String? = nil,
         media: Media? = nil,
         isOpenEnd: Bool = false,
-        isLiked: Bool = false
+        isLiked: Bool = false,
+        isPreview: Bool
     ) {
         self.eventID = eventID
         self.title = title
@@ -49,6 +51,7 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
         self.media = media
         self.isLiked = isLiked
         self.isOpenEnd = isOpenEnd
+        self.isPreview = isPreview
         self.favoriteEventsStore = Container.shared.favoriteEventsStore()
         super.init()
         self.setupListeners()
@@ -62,6 +65,10 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
     }
     
     public var dateRange: ClosedRange<Date>? {
+        
+        if isPreview {
+            return nil
+        }
         
         if !isOpenEnd {
             
@@ -79,7 +86,8 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
     public var timeDisplayMode: TimeDisplayMode {
         return EventUtilities.timeDisplayMode(
             startDate: startDate,
-            endDate: endDate
+            endDate: endDate,
+            isPreview: isPreview
         )
     }
     
@@ -100,10 +108,54 @@ public class EventListItemViewModel: StandardViewModel, Identifiable {
         
     }
     
+    public static func == (lhs: EventListItemViewModel, rhs: EventListItemViewModel) -> Bool {
+        
+        return lhs.eventID == rhs.eventID &&
+        lhs.title == rhs.title &&
+        lhs.startDate == rhs.startDate &&
+        lhs.endDate == rhs.endDate &&
+        lhs.location == rhs.location &&
+        lhs.color == rhs.color &&
+        lhs.media == rhs.media &&
+        lhs.isOpenEnd == rhs.isOpenEnd &&
+        lhs.isLiked == rhs.isLiked
+        
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(eventID)
+        hasher.combine(title)
+        hasher.combine(startDate)
+        hasher.combine(endDate)
+        hasher.combine(location)
+        hasher.combine(color)
+        hasher.combine(media)
+        hasher.combine(isOpenEnd)
+        hasher.combine(isLiked)
+    }
+    
 }
 
+private struct ShowFavoriteIconKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
+extension EnvironmentValues {
+    var showFavoriteIcon: Bool {
+        get { self[ShowFavoriteIconKey.self] }
+        set { self[ShowFavoriteIconKey.self] = newValue }
+    }
+}
+
+public extension View {
+    func showFavoriteIcon(_ value: Bool) -> some View {
+        environment(\.showFavoriteIcon, value)
+    }
+}
 
 public struct EventListItem: View {
+    
+    @Environment(\.showFavoriteIcon) var showFavoriteIcon
     
     @ObservedObject private var viewModel: EventListItemViewModel
     
@@ -142,7 +194,7 @@ public struct EventListItem: View {
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             )
             
-            if viewModel.isLiked {
+            if viewModel.isLiked && showFavoriteIcon {
                 Image(systemName: "heart.fill")
                     .imageScale(.small)
                     .foregroundColor(.red)
@@ -196,7 +248,7 @@ public struct EventListItem: View {
                         }
                         .lineLimit(1)
                         
-                    } else if let startDate = viewModel.startDate {
+                    } else if let startDate = viewModel.startDate, !viewModel.isPreview {
                         
                         Group {
                             
@@ -207,10 +259,15 @@ public struct EventListItem: View {
                         }
                         .lineLimit(1)
                         
+                    } else if viewModel.isPreview {
+                        
+                        Text(EventPackageStrings.notYetScheduled)
+                            .lineLimit(1)
+                        
                     }
                     
                 case .none:
-                    Text("Keine Zeit")
+                    Text(EventPackageStrings.notYetScheduled)
                     
             }
             
@@ -228,21 +285,24 @@ struct EventListItem_Previews: PreviewProvider {
         let noTime = EventListItemViewModel(
             title: "Ghost Dogs (DE)",
             location: "Aula Gymnasium Filder Benden",
-            isLiked: true
+            isLiked: true,
+            isPreview: false
         )
         
         let future = EventListItemViewModel(
             title: "Ghost Dogs (DE)",
             startDate: Date(timeIntervalSinceNow: 160 * 60),
             endDate: Date(timeIntervalSinceNow: 190 * 60),
-            location: "Aula Gymnasium Filder Benden"
+            location: "Aula Gymnasium Filder Benden",
+            isPreview: false
         )
         
         let upcoming = EventListItemViewModel(
             title: "Matthew Welch solo bagpipes: Matthew Welch plays Braxton, Glass, Welch & More! (US)",
             startDate: Date(timeIntervalSinceNow: 5 * 60),
             endDate: Date(timeIntervalSinceNow: 35 * 60),
-            location: "Aula Gymnasium Filder Benden"
+            location: "Aula Gymnasium Filder Benden",
+            isPreview: false
         )
         
         upcoming.color = .blue
@@ -251,7 +311,8 @@ struct EventListItem_Previews: PreviewProvider {
             title: "Ghost Dogs (DE)",
             startDate: Date(timeIntervalSinceNow: -5 * 60),
             endDate: Date(timeIntervalSinceNow: 35 * 60),
-            location: "Aula Gymnasium Filder Benden"
+            location: "Aula Gymnasium Filder Benden",
+            isPreview: false
         )
         
         return Group {

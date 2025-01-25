@@ -57,7 +57,8 @@ public class DayEventsViewModel: ObservableObject, Identifiable {
                         endDate: $0.endDate,
                         location: $0.place?.name,
                         media: $0.mediaCollections.getFirstMedia(for: "header"),
-                        isOpenEnd: $0.extras?.openEnd ?? false
+                        isOpenEnd: $0.extras?.openEnd ?? false,
+                        isPreview: $0.isPreview
                     )
                 }
                 
@@ -69,28 +70,22 @@ public class DayEventsViewModel: ObservableObject, Identifiable {
     
     // MARK: - Actions
     
-    public func reload() {
+    public func reload() async {
         
-        Task {
-            do {
-                try await repository.reloadEvents()
-            } catch {
-                self.logger.error("\(error.debugDescription)")
-            }
+        do {
+            try await repository.reloadEvents()
+        } catch {
+            self.logger.error("\(error.debugDescription)")
         }
         
     }
     
-    public func refresh() {
+    public func refresh() async {
         
-        self.setupObserver()
-        
-        Task {
-            do {
-                try await repository.refreshEvents()
-            } catch {
-                self.logger.error("\(error.debugDescription)")
-            }
+        do {
+            try await repository.refreshEvents()
+        } catch {
+            self.logger.error("\(error.debugDescription)")
         }
         
     }

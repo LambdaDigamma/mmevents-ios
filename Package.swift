@@ -20,10 +20,11 @@ let package = Package(
     dependencies: [
         .package(name: "Core", path: "./../Core"),
         .package(name: "MMPages", path: "./../mmpages-ios"),
-        .package(name: "ModernNetworking", url: "https://github.com/lambdadigamma/modernnetworking", from: "0.1.1"),
-        .package(name: "GRDB", url: "https://github.com/groue/GRDB.swift.git", from: "6.8.0"),
+        .package(name: "ModernNetworking", url: "https://github.com/lambdadigamma/modernnetworking", from: "1.0.0"),
+        .package(name: "GRDB", url: "https://github.com/groue/GRDB.swift", branch: "master"),
         .package(url: "https://github.com/LambdaDigamma/Cache", .upToNextMajor(from: "6.0.0")),
         .package(url: "https://github.com/apple/swift-algorithms", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.0")
     ],
     targets: [
         .target(
@@ -35,6 +36,7 @@ let package = Package(
                 "GRDB",
                 "Cache",
                 .product(name: "Algorithms", package: "swift-algorithms"),
+                .product(name: "Collections", package: "swift-collections")
             ],
             resources: [
                 .process("Resources")

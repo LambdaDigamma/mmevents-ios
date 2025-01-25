@@ -83,8 +83,12 @@ public class EventRepository {
         
         let resource = try await service.index(cacheMode: .revalidate, withPages: withPages)
         
-        try await updateStore(events: resource.data)
-        
+        Task(priority: .userInitiated) {
+            
+            try await updateStore(events: resource.data)
+            
+        }
+            
     }
     
     /// Reloads the events while going through all client cache layers
@@ -97,7 +101,9 @@ public class EventRepository {
         
         let resource = try await service.index(cacheMode: .cached, withPages: false)
         
-        try await updateStore(events: resource.data)
+        Task(priority: .userInitiated) {
+            try await updateStore(events: resource.data)
+        }
         
     }
     
@@ -123,6 +129,10 @@ public class EventRepository {
     ///
     /// - Throws: any errors from the underlying database implementation.
     private func updateStore(events: [Event]) async throws {
+        
+//        if events.isEmpty {
+//            return
+//        }
         
         try await store.deleteAllAndInsert(events.map { $0.toRecord() })
         

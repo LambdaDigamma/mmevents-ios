@@ -36,6 +36,7 @@ public struct EventExtras: Codable, Equatable {
     public var isMovingAct: Bool? = nil
     public var shape: [[Double]]? = nil
     public var tickets: String? = nil
+    public var isPreview: Bool? = nil
     
     enum CodingKeys: String, CodingKey {
         case location
@@ -57,6 +58,7 @@ public struct EventExtras: Codable, Equatable {
         case isMovingAct
         case shape
         case tickets
+        case isPreview = "is_preview"
     }
     
     public init(
@@ -76,7 +78,8 @@ public struct EventExtras: Codable, Equatable {
         iconURL: String? = nil,
         isMovingAct: Bool? = nil,
         shape: [[Double]]? = nil,
-        tickets: String? = nil
+        tickets: String? = nil,
+        isPreview: Bool? = nil
     ) {
         
         self.needsFestivalTicket = needsFestivalTicket
@@ -97,6 +100,7 @@ public struct EventExtras: Codable, Equatable {
         self.isMovingAct = isMovingAct
         self.shape = shape
         self.tickets = tickets
+        self.isPreview = isPreview
         
     }
     

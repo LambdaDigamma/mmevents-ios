@@ -42,8 +42,8 @@ public struct ExtendedDayEventsView: View {
             }
             .padding()
         }
-        .onAppear {
-            viewModel.reload()
+        .task {
+            await viewModel.reload()
         }
         
     }

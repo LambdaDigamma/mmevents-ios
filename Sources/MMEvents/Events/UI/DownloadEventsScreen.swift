@@ -137,7 +137,7 @@ public struct DownloadEventsScreen: View {
             
         }
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
+        .task {
             viewModel.load()
         }
         

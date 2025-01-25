@@ -150,7 +150,8 @@ struct EventCard_Previews: PreviewProvider {
             title: "Ghost Dogs (DE)",
             startDate: Date(),
             endDate: Date().addingTimeInterval(60 * 30),
-            location: "Bettenkamper Meer"
+            location: "Bettenkamper Meer",
+            isPreview: false
         ))
         .padding()
         .preferredColorScheme(.dark)

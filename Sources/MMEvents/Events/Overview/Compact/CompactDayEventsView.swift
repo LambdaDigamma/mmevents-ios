@@ -39,12 +39,12 @@ public struct CompactDayEventsView: View {
             }
             .listStyle(.plain)
             .refreshable {
-                viewModel.refresh()
+                await viewModel.refresh()
             }
             
         }
-        .onAppear {
-            viewModel.reload()
+        .task {
+            await viewModel.reload()
         }
         
     }

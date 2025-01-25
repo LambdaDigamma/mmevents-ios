@@ -38,7 +38,7 @@ public enum EventUtilities {
         
         // TODO: Check this
         
-        if let startDate = startDate, let endDate = endDate {
+        if let startDate = startDate, let endDate = endDate, startDate <= endDate {
             return (startDate...endDate).contains(Date())
         } else if let startDate = startDate {
             let autocalculatedEndDate = startDate.addingTimeInterval(Self.defaultTimeInterval)
@@ -66,7 +66,11 @@ public enum EventUtilities {
         
     }
     
-    public static func timeDisplayMode(startDate: Date?, endDate: Date?) -> TimeDisplayMode {
+    public static func timeDisplayMode(startDate: Date?, endDate: Date?, isPreview: Bool) -> TimeDisplayMode {
+        
+        if isPreview {
+            return .none
+        }
         
         guard let startDate = startDate else {
             return .none

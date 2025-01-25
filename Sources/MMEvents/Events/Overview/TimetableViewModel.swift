@@ -14,11 +14,14 @@ public class TimetableViewModel: ObservableObject {
     
     @Published public var dates: [Date] = []
     @Published var selectedDate: Date = .init()
-    
     @Published var daysViewModels: [DayEventsViewModel] = []
+    @Published var allEventsArePreview: Bool = false
+    
+    public var events: [EventListItemViewModel] {
+        daysViewModels.map { $0.events }.reduce([], +)
+    }
     
     private let repository: EventRepository
-    
     
     public var cancellables = Set<AnyCancellable>()
     
@@ -38,6 +41,10 @@ public class TimetableViewModel: ObservableObject {
                 
                 
             } receiveValue: { (events: [Event]) in
+                
+                self.allEventsArePreview = events.allSatisfy { event in
+                    event.isPreview
+                }
                 
                 self.dates = DateUtils.sortedUniqueDates(events.compactMap { $0.startDate })
                 
@@ -59,6 +66,7 @@ public class TimetableViewModel: ObservableObject {
         
         Task {
             try await repository.reloadEvents()
+            print("RELOADING")
         }
         
     }

@@ -31,8 +31,25 @@ public struct TimetableScreen: View {
                     VenueEventsGrid()
             }
             
+//            if viewModel.allEventsArePreview {
+//                
+//                PreviewListEventsView()
+//                
+//            } else {
+//                
+//                switch displayMode {
+//                    case .compact:
+//                        CompactEventsView(viewModel: viewModel)
+//                    case .images:
+//                        ExtendedEventsView(viewModel: viewModel)
+//                    case .venueGrid:
+//                        VenueEventsGrid()
+//                }
+//                
+//            }
+            
         }
-        .onAppear {
+        .task {
             viewModel.load()
         }
 //        .toolbar {

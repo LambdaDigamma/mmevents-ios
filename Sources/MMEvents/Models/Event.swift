@@ -110,6 +110,10 @@ public struct Event: BaseEvent {
         
     }
     
+    public var isPreview: Bool {
+        return extras?.isPreview ?? false
+    }
+    
 }
 
 extension Event {
